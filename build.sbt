@@ -13,6 +13,7 @@ lazy val microservice = Project("ioss-intermediary-registration", file("."))
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
+  .settings(PlayKeys.playDefaultPort := 10185)
 
 lazy val it = project
   .enablePlugins(PlayScala)
