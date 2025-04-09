@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.3.4"
 
 lazy val microservice = Project("ioss-intermediary-registration", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
