@@ -1,4 +1,5 @@
 import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.4"
@@ -11,12 +12,23 @@ lazy val microservice = Project("ioss-intermediary-registration", file("."))
     // suppress warnings in generated routes files
     scalacOptions += "-Wconf:src=routes/.*:s",
   )
+  .settings(PlayKeys.playDefaultPort := 10185)
+  .configs(IntegrationTest)
+  .settings(integrationTestSettings(): _*)
+  .configs(Test)
+  .settings(inConfig(Test)(testSettings): _*)
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
-  .settings(PlayKeys.playDefaultPort := 10185)
 
-lazy val it = project
-  .enablePlugins(PlayScala)
-  .dependsOn(microservice % "test->test")
-  .settings(DefaultBuildSettings.itSettings())
-  .settings(libraryDependencies ++= AppDependencies.it)
+
+lazy val testSettings = Defaults.testSettings ++ Seq(
+  unmanagedSourceDirectories := Seq(
+    baseDirectory.value / "test",
+    baseDirectory.value / "test" / "testutils"
+  ),
+  parallelExecution := false,
+  fork := true,
+  javaOptions ++= Seq(
+    "-Dlogger.resource=logback-test.xml"
+  )
+)
