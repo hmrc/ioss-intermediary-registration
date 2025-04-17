@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.testutils
 
-import play.api.Configuration
+import uk.gov.hmrc.auth.core.retrieve.~
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
+object TestAuthRetrievals {
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
 }
