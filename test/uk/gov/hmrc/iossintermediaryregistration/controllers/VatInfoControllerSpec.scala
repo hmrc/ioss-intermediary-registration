@@ -27,7 +27,6 @@ class VatInfoControllerSpec extends BaseSpec {
       val vatInfo = VatCustomerInfo(
         registrationDate = Some(LocalDate.now),
         desAddress = DesAddress("line1", None, None, None, None, Some("AA11 1AA"), "GB"),
-        partOfVatGroup = false,
         organisationName = Some("Foo"),
         singleMarketIndicator = false,
         individualName = None

@@ -60,7 +60,6 @@ trait BaseSpec
     VatCustomerInfo(
       registrationDate = Some(LocalDate.now(stubClock)),
       desAddress = DesAddress("Line 1", None, None, None, None, Some("AA11 1AA"), "GB"),
-      partOfVatGroup = false,
       organisationName = Some("Company name"),
       singleMarketIndicator = true,
       individualName = None
