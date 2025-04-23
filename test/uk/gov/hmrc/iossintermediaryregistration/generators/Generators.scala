@@ -81,7 +81,6 @@ trait Generators {
     Arbitrary {
       for {
         registrationDate <- arbitrary[LocalDate]
-        partOfVatGroup <- arbitrary[Boolean]
         organisationName <- arbitrary[String]
         individualName <- arbitrary[String]
         singleMarketIndicator <- arbitrary[Boolean]
@@ -90,7 +89,6 @@ trait Generators {
         VatCustomerInfo(
           desAddress = arbitraryDesAddress.arbitrary.sample.get,
           registrationDate = Some(registrationDate),
-          partOfVatGroup = partOfVatGroup,
           organisationName = Some(organisationName),
           individualName = Some(individualName),
           singleMarketIndicator = singleMarketIndicator
