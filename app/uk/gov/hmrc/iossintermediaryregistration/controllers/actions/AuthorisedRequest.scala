@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.controllers.actions
 
-import play.api.Configuration
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.domain.Vrn
 
-import javax.inject.{Inject, Singleton}
+case class AuthorisedRequest[A](request: Request[A], credentials: Credentials, userId: String, vrn: Option[Vrn]) extends WrappedRequest[A](request)
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
-}
+case class AuthorisedMandatoryVrnRequest[A](request: Request[A], credentials: Credentials, userId: String, vrn: Vrn) extends WrappedRequest[A](request)

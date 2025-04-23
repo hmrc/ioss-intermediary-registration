@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models
 
-import play.api.Configuration
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+case class Country(code: String, name: String)
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+object Country {
 
-  val appName: String = config.get[String]("appName")
+  implicit val format: OFormat[Country] = Json.format[Country]
 }

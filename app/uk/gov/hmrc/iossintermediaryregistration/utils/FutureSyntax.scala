@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.utils
 
-import play.api.Configuration
+import scala.concurrent.Future
 
-import javax.inject.{Inject, Singleton}
+object FutureSyntax {
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+  implicit class FutureOps[A](val a: A) extends AnyVal {
 
-  val appName: String = config.get[String]("appName")
+    def toFuture: Future[A] = Future.successful(a)
+  }
+
 }

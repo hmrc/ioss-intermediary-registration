@@ -18,10 +18,11 @@ package uk.gov.hmrc.iossintermediaryregistration.config
 
 import play.api.Configuration
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+class GetVatInfoConfig @Inject()(config: Configuration) {
 
-  val appName: String = config.get[String]("appName")
+  val baseUrl: Service = config.get[Service]("microservice.services.get-vat-info")
+  val authorizationToken: String = config.get[String]("microservice.services.get-vat-info.authorizationToken")
+  val environment: String = config.get[String]("microservice.services.get-vat-info.environment")
 }
