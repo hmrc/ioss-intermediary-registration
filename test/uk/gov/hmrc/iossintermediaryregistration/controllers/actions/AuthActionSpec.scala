@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.*
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -95,7 +95,7 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
-    "when the user is logged in as an Individual with a VAT enrolment, strong credentials and confidence level 200" - {
+    "when the user is logged in as an Individual with a VAT enrolment, strong credentials and confidence level 250" - {
 
       "must succeed" in {
 
@@ -105,7 +105,7 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment ~ Some(Individual) ~ ConfidenceLevel.L200))
+            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment ~ Some(Individual) ~ ConfidenceLevel.L250))
 
           val action = new AuthActionImpl(mockAuthConnector, bodyParsers)
           val controller = new Harness(action)
@@ -116,7 +116,7 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
-    "when the user has logged in as an Individual with a VAT enrolment and strong credentials, but confidence level less than 200" - {
+    "when the user has logged in as an Individual with a VAT enrolment and strong credentials, but confidence level less than 250" - {
 
       "must return Unauthorized" in {
 
@@ -133,6 +133,69 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
           val result = controller.onPageLoad()(FakeRequest())
 
           status(result) mustEqual UNAUTHORIZED
+        }
+      }
+    }
+
+    "when the user is logged in as an Agent with a VAT enrolment, strong credentials and confidence level 250" - {
+
+      "must succeed" in {
+
+        val application = applicationBuilder.build()
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment ~ Some(Agent) ~ ConfidenceLevel.L250))
+
+          val action = new AuthActionImpl(mockAuthConnector, bodyParsers)
+          val controller = new Harness(action)
+          val result = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustEqual OK
+        }
+      }
+    }
+
+    "when the user has logged in as an Agent with a VAT enrolment and strong credentials, but confidence level less than 250" - {
+
+      "must return Unauthorized" in {
+
+        val application = applicationBuilder.build()
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment ~ Some(Agent) ~ ConfidenceLevel.L50))
+
+          val action = new AuthActionImpl(mockAuthConnector, bodyParsers)
+          val controller = new Harness(action)
+          val result = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustEqual UNAUTHORIZED
+        }
+      }
+    }
+
+    "when the user is logged in as an Agent with a VATDEC enrolment, strong credentials and confidence level 250" - {
+
+      "must succeed" in {
+
+        val application = applicationBuilder.build()
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+
+          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment2 ~ Some(Agent) ~ ConfidenceLevel.L250))
+
+          val action = new AuthActionImpl(mockAuthConnector, bodyParsers)
+          val controller = new Harness(action)
+          val result = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustEqual OK
         }
       }
     }
