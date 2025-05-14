@@ -19,7 +19,7 @@ package uk.gov.hmrc.iossintermediaryregistration.controllers.actions
 import play.api.mvc.*
 import play.api.mvc.Results.Unauthorized
 import uk.gov.hmrc.auth.core.*
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.Vrn
@@ -44,7 +44,7 @@ class AuthActionImpl @Inject()(
 
     authorised(
       AuthProviders(AuthProvider.GovernmentGateway) and
-        (AffinityGroup.Individual or AffinityGroup.Organisation) and
+        (AffinityGroup.Individual or AffinityGroup.Organisation or AffinityGroup.Agent) and
         CredentialStrength(CredentialStrength.strong)
     ).retrieve(
       Retrievals.credentials and
@@ -58,9 +58,17 @@ class AuthActionImpl @Inject()(
         val maybeVrn = findVrnFromEnrolments(enrolments)
         block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
 
+      case Some(credentials) ~ Some(internalId) ~ enrolments ~ Some(Agent) ~ confidence =>
+        val maybeVrn = findVrnFromEnrolments(enrolments)
+        if (confidence >= ConfidenceLevel.L250) {
+          block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
+        } else {
+          throw InsufficientConfidenceLevel("Insufficient confidence level")
+        }
+
       case Some(credentials) ~ Some(internalId) ~ enrolments ~ Some(Individual) ~ confidence =>
         val maybeVrn = findVrnFromEnrolments(enrolments)
-        if (confidence >= ConfidenceLevel.L200) {
+        if (confidence >= ConfidenceLevel.L250) {
           block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
         } else {
           throw InsufficientConfidenceLevel("Insufficient confidence level")
