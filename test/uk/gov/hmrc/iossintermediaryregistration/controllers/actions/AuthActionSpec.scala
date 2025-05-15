@@ -137,30 +137,9 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
-    "when the user is logged in as an Agent with a VAT enrolment, strong credentials and confidence level 250" - {
+    "when the user is logged in as an Agent with a VAT enrolment, strong credentials" - {
 
       "must succeed" in {
-
-        val application = applicationBuilder.build()
-
-        running(application) {
-          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
-
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment ~ Some(Agent) ~ ConfidenceLevel.L250))
-
-          val action = new AuthActionImpl(mockAuthConnector, bodyParsers)
-          val controller = new Harness(action)
-          val result = controller.onPageLoad()(FakeRequest())
-
-          status(result) mustEqual OK
-        }
-      }
-    }
-
-    "when the user has logged in as an Agent with a VAT enrolment and strong credentials, but confidence level less than 250" - {
-
-      "must return Unauthorized" in {
 
         val application = applicationBuilder.build()
 
@@ -174,12 +153,12 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
           val controller = new Harness(action)
           val result = controller.onPageLoad()(FakeRequest())
 
-          status(result) mustEqual UNAUTHORIZED
+          status(result) mustEqual OK
         }
       }
     }
 
-    "when the user is logged in as an Agent with a VATDEC enrolment, strong credentials and confidence level 250" - {
+    "when the user is logged in as an Agent with a VATDEC enrolment and strong credentials" - {
 
       "must succeed" in {
 
@@ -189,7 +168,7 @@ class AuthActionSpec extends BaseSpec with BeforeAndAfterEach {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment2 ~ Some(Agent) ~ ConfidenceLevel.L250))
+            .thenReturn(Future.successful(Some(testCredentials) ~ Some("id") ~ vatEnrolment2 ~ Some(Agent) ~ ConfidenceLevel.L50))
 
           val action = new AuthActionImpl(mockAuthConnector, bodyParsers)
           val controller = new Harness(action)
