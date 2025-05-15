@@ -60,11 +60,7 @@ class AuthActionImpl @Inject()(
 
       case Some(credentials) ~ Some(internalId) ~ enrolments ~ Some(Agent) ~ confidence =>
         val maybeVrn = findVrnFromEnrolments(enrolments)
-        if (confidence >= ConfidenceLevel.L250) {
-          block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
-        } else {
-          throw InsufficientConfidenceLevel("Insufficient confidence level")
-        }
+        block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
 
       case Some(credentials) ~ Some(internalId) ~ enrolments ~ Some(Individual) ~ confidence =>
         val maybeVrn = findVrnFromEnrolments(enrolments)
