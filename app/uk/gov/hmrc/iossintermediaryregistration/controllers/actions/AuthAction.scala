@@ -58,7 +58,7 @@ class AuthActionImpl @Inject()(
         val maybeVrn = findVrnFromEnrolments(enrolments)
         block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
 
-      case Some(credentials) ~ Some(internalId) ~ enrolments ~ Some(Agent) ~ confidence =>
+      case Some(credentials) ~ Some(internalId) ~ enrolments ~ Some(Agent) ~ _ =>
         val maybeVrn = findVrnFromEnrolments(enrolments)
         block(AuthorisedRequest(request, credentials, internalId, maybeVrn))
 
