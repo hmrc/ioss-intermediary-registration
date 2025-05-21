@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.models.responses
 
+import uk.gov.hmrc.iossintermediaryregistration.models.core.EisErrorResponse
+
 sealed trait ErrorResponse {
   val body: String
 }
@@ -50,5 +52,10 @@ case object GatewayTimeout extends ErrorResponse {
 
 case class UnexpectedResponseStatus(status: Int, body: String) extends ErrorResponse
 
-
+case class EisError(eisErrorResponse: EisErrorResponse) extends ErrorResponse {
+  override val body: String =
+    s"${eisErrorResponse.timestamp} " +
+      s"${eisErrorResponse.error} " +
+      s"${eisErrorResponse.errorMessage} "
+}
 
