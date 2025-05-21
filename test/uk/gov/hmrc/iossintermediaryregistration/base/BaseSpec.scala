@@ -62,7 +62,8 @@ trait BaseSpec
       desAddress = DesAddress("Line 1", None, None, None, None, Some("AA11 1AA"), "GB"),
       organisationName = Some("Company name"),
       singleMarketIndicator = true,
-      individualName = None
+      individualName = None,
+      deregistrationDecisionDate = None
     )
 
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

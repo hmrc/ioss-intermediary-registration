@@ -29,7 +29,8 @@ class VatInfoControllerSpec extends BaseSpec {
         desAddress = DesAddress("line1", None, None, None, None, Some("AA11 1AA"), "GB"),
         organisationName = Some("Foo"),
         singleMarketIndicator = false,
-        individualName = None
+        individualName = None,
+        deregistrationDecisionDate = None
       )
 
       when(mockConnector.getVatCustomerDetails(any())(any())) thenReturn Right(vatInfo).toFuture

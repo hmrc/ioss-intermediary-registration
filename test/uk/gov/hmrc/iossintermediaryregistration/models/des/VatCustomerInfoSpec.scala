@@ -36,7 +36,8 @@ class VatCustomerInfoSpec extends BaseSpec {
                 "middleName" -> "B",
                 "lastName" -> "C"
               ),
-              "singleMarketIndicator" -> false
+              "singleMarketIndicator" -> false,
+              "deregistrationDecisionDate" -> "2021-01-02"
             )
           )
         )
@@ -46,7 +47,8 @@ class VatCustomerInfoSpec extends BaseSpec {
           registrationDate = Some(LocalDate.of(2020, 1, 2)),
           organisationName = Some("Foo"),
           singleMarketIndicator = false,
-          individualName = Some("A B C")
+          individualName = Some("A B C"),
+          deregistrationDecisionDate = Some(LocalDate.of(2021, 1, 2))
         )
 
         json.validate[VatCustomerInfo](VatCustomerInfo.desReads) mustBe JsSuccess(expectedResult)
@@ -73,7 +75,8 @@ class VatCustomerInfoSpec extends BaseSpec {
           registrationDate = None,
           organisationName = None,
           singleMarketIndicator = false,
-          individualName = None
+          individualName = None,
+          deregistrationDecisionDate = None
         )
 
         json.validate[VatCustomerInfo](VatCustomerInfo.desReads) mustBe JsSuccess(expectedResult)
