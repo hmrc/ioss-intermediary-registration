@@ -38,13 +38,13 @@ class ValidateCoreRegistrationControllerSpec extends BaseSpec {
 
     val coreRegistrationValidationResult: CoreRegistrationValidationResult =
       CoreRegistrationValidationResult(
-        "IM2344433220",
+        "IN2344433220",
         Some("IN4747493822"),
         "FR",
         true,
         Seq(Match(
           MatchType.FixedEstablishmentQuarantinedNETP,
-          "IM0987654321",
+          "IN0987654321",
           Some("444444444"),
           "DE",
           Some(3),
