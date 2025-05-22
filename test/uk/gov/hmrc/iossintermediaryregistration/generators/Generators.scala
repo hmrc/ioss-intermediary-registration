@@ -84,6 +84,7 @@ trait Generators {
         organisationName <- arbitrary[String]
         individualName <- arbitrary[String]
         singleMarketIndicator <- arbitrary[Boolean]
+        deregistrationDecisionDate <- arbitrary[LocalDate]
       }
       yield
         VatCustomerInfo(
@@ -91,7 +92,8 @@ trait Generators {
           registrationDate = Some(registrationDate),
           organisationName = Some(organisationName),
           individualName = Some(individualName),
-          singleMarketIndicator = singleMarketIndicator
+          singleMarketIndicator = singleMarketIndicator,
+          deregistrationDecisionDate = Some(deregistrationDecisionDate)
         )
     }
   }
