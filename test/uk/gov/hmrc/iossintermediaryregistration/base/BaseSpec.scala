@@ -27,8 +27,8 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthAction, FakeAuthAction}
 import uk.gov.hmrc.iossintermediaryregistration.generators.Generators
+import uk.gov.hmrc.iossintermediaryregistration.models.DesAddress
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
-import uk.gov.hmrc.iossintermediaryregistration.models.{DesAddress, Enumerable, WithName}
 
 import java.time.format.DateTimeFormatter
 import java.time.{Clock, LocalDate, ZoneId}
@@ -68,7 +68,7 @@ trait BaseSpec
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     .withLocale(Locale.UK)
     .withZone(ZoneId.of("GMT"))
-  
+
 }
 
 
