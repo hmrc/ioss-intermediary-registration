@@ -23,9 +23,9 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, HttpException, StringContextOps}
 import uk.gov.hmrc.iossintermediaryregistration.config.CoreValidationConfig
+import uk.gov.hmrc.iossintermediaryregistration.connectors.ValidateCoreRegistrationHttpParser.{ValidateCoreRegistrationReads, ValidateCoreRegistrationResponse}
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.core.{CoreRegistrationRequest, EisErrorResponse}
-import uk.gov.hmrc.iossintermediaryregistration.connectors.ValidateCoreRegistrationHttpParser.{ValidateCoreRegistrationReads, ValidateCoreRegistrationResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.EisError
 
 import java.time.Instant

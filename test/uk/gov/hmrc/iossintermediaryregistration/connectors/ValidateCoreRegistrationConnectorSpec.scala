@@ -9,7 +9,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers.{BAD_GATEWAY, BAD_REQUEST, INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, NOT_FOUND, SERVICE_UNAVAILABLE, UNSUPPORTED_MEDIA_TYPE, running}
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
-import uk.gov.hmrc.iossintermediaryregistration.models.core.{CoreRegistrationRequest, CoreRegistrationValidationResult, EisErrorResponse, Match, MatchType}
+import uk.gov.hmrc.iossintermediaryregistration.models.core.*
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EisError, UnexpectedResponseStatus}
 import uk.gov.hmrc.iossintermediaryregistration.testutils.SourceType
 
@@ -53,7 +53,7 @@ class ValidateCoreRegistrationConnectorSpec extends BaseSpec with WireMockHelper
   "validateCoreRegistration" - {
 
     "must return Right(CoreRegistrationValidationResult) when the server returns OK for a recognised payload" in {
-      
+
       val responseJson = Json.prettyPrint(Json.toJson(validCoreRegistrationResponse))
 
       server.stubFor(

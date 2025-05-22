@@ -20,14 +20,12 @@ import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
-import uk.gov.hmrc.iossintermediaryregistration.models.responses.EisError
-import uk.gov.hmrc.iossintermediaryregistration.models.responses.ErrorResponse
-import uk.gov.hmrc.iossintermediaryregistration.models.responses.InvalidJson
-import uk.gov.hmrc.iossintermediaryregistration.models.responses.UnexpectedResponseStatus
-import uk.gov.hmrc.iossintermediaryregistration.models.core._
+import uk.gov.hmrc.iossintermediaryregistration.models.core.*
+import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EisError, ErrorResponse, InvalidJson, UnexpectedResponseStatus}
 
 import java.time.Instant
 import java.util.UUID
+
 object ValidateCoreRegistrationHttpParser extends Logging {
 
   type ValidateCoreRegistrationResponse = Either[ErrorResponse, CoreRegistrationValidationResult]

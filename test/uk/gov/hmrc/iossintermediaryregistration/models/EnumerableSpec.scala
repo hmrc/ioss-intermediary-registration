@@ -24,7 +24,9 @@ import play.api.libs.json.*
 object EnumerableSpec {
 
   sealed trait Foo
+
   case object Bar extends Foo
+
   case object Baz extends Foo
 
   object Foo {
