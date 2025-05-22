@@ -36,8 +36,10 @@ class VatCustomerInfoSpec extends BaseSpec {
                 "middleName" -> "B",
                 "lastName" -> "C"
               ),
-              "singleMarketIndicator" -> false,
-              "deregistrationDecisionDate" -> "2021-01-02"
+              "singleMarketIndicator" -> false
+            ),
+            "deregistration" -> Json.obj(
+              "effectDateOfCancellation" -> "2021-01-02"
             )
           )
         )

@@ -73,7 +73,7 @@ object VatCustomerInfo {
         (__ \ "approvedInformation" \ "customerDetails" \ "individual" \ "middleName").readNullable[String] and
         (__ \ "approvedInformation" \ "customerDetails" \ "individual" \ "lastName").readNullable[String] and
         (__ \ "approvedInformation" \ "customerDetails" \ "singleMarketIndicator").read[Boolean] and
-        (__ \ "approvedInformation" \ "customerDetails" \ "deregistrationDecisionDate").readNullable[LocalDate]
+        (__ \ "approvedInformation" \ "deregistration" \ "effectDateOfCancellation").readNullable[LocalDate]
       )(VatCustomerInfo.fromDesPayload _)
 
   implicit val writes: OWrites[VatCustomerInfo] =
