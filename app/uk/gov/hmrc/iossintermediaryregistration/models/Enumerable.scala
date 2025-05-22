@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 trait Enumerable[A] {
 
@@ -44,7 +44,7 @@ object Enumerable {
       }
     }
 
-    implicit def writes[A : Enumerable]: Writes[A] = {
+    implicit def writes[A: Enumerable]: Writes[A] = {
       Writes(value => JsString(value.toString))
     }
 
