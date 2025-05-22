@@ -25,8 +25,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.Vrn
-import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.FakeAuthAction
-import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthAction
+import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthAction, FakeAuthAction}
 import uk.gov.hmrc.iossintermediaryregistration.generators.Generators
 import uk.gov.hmrc.iossintermediaryregistration.models.DesAddress
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo

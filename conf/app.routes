@@ -1,5 +1,6 @@
 # microservice specific routes
 
-GET        /vat-information        uk.gov.hmrc.iossintermediaryregistration.controllers.VatInfoController.get()
+GET        /vat-information                                   uk.gov.hmrc.iossintermediaryregistration.controllers.VatInfoController.get()
 
+POST       /validate-core-registration                       uk.gov.hmrc.iossintermediaryregistration.controllers.ValidateCoreRegistrationController.post()
 
