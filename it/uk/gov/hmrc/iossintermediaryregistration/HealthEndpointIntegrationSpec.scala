@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package iossintermediaryregistration
+package uk.gov.hmrc.iossintermediaryregistration
 
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 
-import play.api.Configuration
-import uk.gov.hmrc.domain.Vrn
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+import java.time.LocalDateTime
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+case class EtmpAdminUse(changeDate: Option[LocalDateTime])
 
-  val appName: String = config.get[String]("appName")
+object EtmpAdminUse {
 
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
-
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
-
+  implicit val format: OFormat[EtmpAdminUse] = Json.format[EtmpAdminUse]
 }

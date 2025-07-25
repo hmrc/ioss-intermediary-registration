@@ -5,6 +5,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
 
 import java.time.LocalDate
 
@@ -69,6 +70,20 @@ trait Generators {
     }
   }
 
+  implicit lazy val arbitraryVatNumberTraderId: Arbitrary[VatNumberTraderId] =
+    Arbitrary {
+      for {
+        vatNumber <- Gen.alphaNumStr
+      } yield VatNumberTraderId(vatNumber)
+    }
+
+  implicit lazy val arbitraryTaxRefTraderID: Arbitrary[TaxRefTraderID] =
+    Arbitrary {
+      for {
+        taxReferenceNumber <- Gen.alphaNumStr
+      } yield TaxRefTraderID(taxReferenceNumber)
+    }
+
   implicit lazy val arbitraryVrn: Arbitrary[Vrn] = {
     Arbitrary {
       for {
@@ -97,4 +112,119 @@ trait Generators {
         )
     }
   }
+
+  implicit lazy val arbitraryEtmpTradingName: Arbitrary[EtmpTradingName] =
+    Arbitrary {
+      for {
+        tradingName <- Gen.alphaStr
+      } yield EtmpTradingName(tradingName)
+    }
+
+  implicit lazy val arbitraryEtmpCustomerIdentification: Arbitrary[EtmpCustomerIdentification] =
+    Arbitrary {
+      for {
+        vrn <- arbitraryVrn.arbitrary
+        etmpIdType <- Gen.oneOf(EtmpIdType.values)
+      } yield EtmpCustomerIdentification(etmpIdType, vrn.vrn)
+    }
+
+  implicit lazy val arbitraryEtmpAdministration: Arbitrary[EtmpAdministration] =
+    Arbitrary {
+      for {
+        messageType <- Gen.oneOf(EtmpMessageType.values)
+      } yield EtmpAdministration(messageType, "IOSS")
+    }
+
+  implicit lazy val arbitrarySchemeType: Arbitrary[SchemeType] =
+    Arbitrary {
+      Gen.oneOf(SchemeType.values)
+    }
+
+  implicit lazy val arbitraryWebsite: Arbitrary[EtmpWebsite] =
+    Arbitrary {
+      for {
+        websiteAddress <- Gen.alphaStr
+      } yield EtmpWebsite(websiteAddress)
+    }
+
+  implicit lazy val arbitraryEtmpOtherIossIntermediaryRegistrations: Arbitrary[EtmpOtherIossIntermediaryRegistrations] =
+    Arbitrary {
+      for {
+        countryCode <- Gen.listOfN(2, Gen.alphaChar).map(_.mkString)
+        intermediaryNumber <- Gen.listOfN(12, Gen.alphaChar).map(_.mkString)
+      } yield EtmpOtherIossIntermediaryRegistrations(countryCode, intermediaryNumber)
+    }
+
+  implicit lazy val arbitraryEtmpIntermediaryDetails: Arbitrary[EtmpIntermediaryDetails] =
+    Arbitrary {
+      for {
+        amountOfOtherRegistrations <- Gen.chooseNum(1, 5)
+        otherRegistrationDetails <- Gen.listOfN(amountOfOtherRegistrations, arbitraryEtmpOtherIossIntermediaryRegistrations.arbitrary)
+      } yield EtmpIntermediaryDetails(otherRegistrationDetails)
+    }
+
+  implicit lazy val arbitraryEtmpOtherAddress: Arbitrary[EtmpOtherAddress] =
+    Arbitrary {
+      for {
+        issuedBy <- Gen.listOfN(2, Gen.alphaChar).map(_.mkString)
+        tradingName <- Gen.listOfN(20, Gen.alphaChar).map(_.mkString)
+        addressLine1 <- Gen.listOfN(35, Gen.alphaChar).map(_.mkString)
+        addressLine2 <- Gen.listOfN(35, Gen.alphaChar).map(_.mkString)
+        townOrCity <- Gen.listOfN(35, Gen.alphaChar).map(_.mkString)
+        regionOrState <- Gen.listOfN(35, Gen.alphaChar).map(_.mkString)
+        postcode <- Gen.listOfN(35, Gen.alphaChar).map(_.mkString)
+      } yield EtmpOtherAddress(
+        issuedBy,
+        tradingName,
+        addressLine1,
+        Some(addressLine2),
+        townOrCity,
+        Some(regionOrState),
+        postcode
+      )
+    }
+
+  implicit lazy val arbitraryBic: Arbitrary[Bic] = {
+    val asciiCodeForA = 65
+    val asciiCodeForN = 78
+    val asciiCodeForP = 80
+    val asciiCodeForZ = 90
+
+    Arbitrary {
+      for {
+        firstChars <- Gen.listOfN(6, Gen.alphaUpperChar).map(_.mkString)
+        char7 <- Gen.oneOf(Gen.alphaUpperChar, Gen.choose(2, 9))
+        char8 <- Gen.oneOf(
+          Gen.choose(asciiCodeForA, asciiCodeForN).map(_.toChar),
+          Gen.choose(asciiCodeForP, asciiCodeForZ).map(_.toChar),
+          Gen.choose(0, 9)
+        )
+        lastChars <- Gen.option(Gen.listOfN(3, Gen.oneOf(Gen.alphaUpperChar, Gen.numChar)).map(_.mkString))
+      } yield Bic(s"$firstChars$char7$char8${lastChars.getOrElse("")}").get
+    }
+  }
+
+  implicit lazy val arbitraryIban: Arbitrary[Iban] =
+    Arbitrary {
+      Gen.oneOf(
+        "GB94BARC10201530093459",
+        "GB33BUKB20201555555555",
+        "DE29100100100987654321",
+        "GB24BKEN10000031510604",
+        "GB27BOFI90212729823529",
+        "GB17BOFS80055100813796",
+        "GB92BARC20005275849855",
+        "GB66CITI18500812098709",
+        "GB15CLYD82663220400952",
+        "GB26MIDL40051512345674",
+        "GB76LOYD30949301273801",
+        "GB25NWBK60080600724890",
+        "GB60NAIA07011610909132",
+        "GB29RBOS83040210126939",
+        "GB79ABBY09012603367219",
+        "GB21SCBL60910417068859",
+        "GB42CPBK08005470328725"
+      ).map(v => Iban(v).toOption.get)
+    }
+
 }

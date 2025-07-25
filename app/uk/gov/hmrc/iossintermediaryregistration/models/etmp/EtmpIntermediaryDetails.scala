@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 
-import play.api.Configuration
-import uk.gov.hmrc.domain.Vrn
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+case class EtmpIntermediaryDetails(otherIossIntermediaryRegistrations: Seq[EtmpOtherIossIntermediaryRegistrations])
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
-
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
-
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
-
+object EtmpIntermediaryDetails {
+  implicit val format: OFormat[EtmpIntermediaryDetails] = Json.format[EtmpIntermediaryDetails]
 }
+
+
