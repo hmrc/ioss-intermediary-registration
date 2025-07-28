@@ -33,7 +33,7 @@ class RegistrationConnectorSpec extends BaseSpec with WireMockHelper {
       )
       .build()
 
-  private val createRegistrationUrl = "/ioss-registration-stub/vec/iosssubscription/subdatatransfer/v1"
+  private val createRegistrationUrl = "/ioss-intermediary-registration-stub/vec/iosssubscription/subdatatransfer/v1"
 
   private val fixedDelay = 21000
 
