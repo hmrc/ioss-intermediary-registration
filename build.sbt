@@ -18,7 +18,6 @@ lazy val microservice = Project("ioss-intermediary-registration", file("."))
   .settings(integrationTestSettings(): _*)
   .configs(Test)
   .settings(inConfig(Test)(testSettings): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
 
 
