@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 
-import play.api.Configuration
-import uk.gov.hmrc.domain.Vrn
+import uk.gov.hmrc.iossintermediaryregistration.models.{Enumerable, WithName}
 
-import javax.inject.{Inject, Singleton}
+sealed trait EtmpMessageType
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+object EtmpMessageType extends Enumerable.Implicits {
 
-  val appName: String = config.get[String]("appName")
+  case object IOSSIntCreate extends WithName("IOSSIntCreate") with EtmpMessageType
 
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
+  val values: Seq[EtmpMessageType] = Seq(
+    IOSSIntCreate
+  )
 
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
-
+  implicit val enumerable: Enumerable[EtmpMessageType] =
+    Enumerable(values.map(v => v.toString -> v): _*)
 }

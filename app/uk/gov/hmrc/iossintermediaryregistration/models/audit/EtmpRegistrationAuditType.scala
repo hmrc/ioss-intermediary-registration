@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.audit
 
-import play.api.Configuration
-import uk.gov.hmrc.domain.Vrn
+import uk.gov.hmrc.iossintermediaryregistration.models.{Enumerable, WithName}
 
-import javax.inject.{Inject, Singleton}
+sealed trait EtmpRegistrationAuditType {
+  val auditType: String
+  val transactionName: String
+}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
-
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
-
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
+object EtmpRegistrationAuditType extends Enumerable.Implicits {
+  case object CreateRegistration extends WithName("CreateRegistration") with EtmpRegistrationAuditType {
+    override val auditType: String = "EtmpRegistration"
+    override val transactionName: String = "etmp-registration"
+  }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.enrolments
 
-import play.api.Configuration
-import uk.gov.hmrc.domain.Vrn
+import play.api.libs.json.*
 
-import javax.inject.{Inject, Singleton}
+case class SubscriberRequest(serviceName: String, callback: String, etmpId: String)
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-
-  val appName: String = config.get[String]("appName")
-
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
-
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
+object SubscriberRequest {
+  implicit val format: OFormat[SubscriberRequest] = Json.format[SubscriberRequest]
 
 }

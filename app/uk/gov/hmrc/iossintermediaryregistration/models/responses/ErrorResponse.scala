@@ -52,6 +52,8 @@ case object GatewayTimeout extends ErrorResponse {
 
 case class UnexpectedResponseStatus(status: Int, body: String) extends ErrorResponse
 
+case class EtmpEnrolmentError(code: String, body: String) extends ErrorResponse
+
 case class EisError(eisErrorResponse: EisErrorResponse) extends ErrorResponse {
   override val body: String =
     s"${eisErrorResponse.timestamp} " +
@@ -59,3 +61,4 @@ case class EisError(eisErrorResponse: EisErrorResponse) extends ErrorResponse {
       s"${eisErrorResponse.errorMessage} "
 }
 
+case class EtmpException(message: String) extends Exception(message)
