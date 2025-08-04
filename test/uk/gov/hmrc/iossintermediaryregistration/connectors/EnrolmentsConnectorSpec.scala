@@ -4,12 +4,9 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import play.api.Application
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{Json, JsValue}
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
-
-import java.time.LocalDateTime
 
 class EnrolmentsConnectorSpec extends BaseSpec with WireMockHelper {
 

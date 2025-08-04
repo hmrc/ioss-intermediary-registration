@@ -1,13 +1,12 @@
 package uk.gov.hmrc.iossintermediaryregistration.services
 
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.ArgumentMatchers.eq as eqTo
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers.running
-import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
-import uk.gov.hmrc.iossintermediaryregistration.connectors.{GetVatInfoConnector, RegistrationConnector}
+import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationConnector
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpRegistrationRequest
@@ -15,7 +14,6 @@ import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 
 import java.time.LocalDateTime
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
 

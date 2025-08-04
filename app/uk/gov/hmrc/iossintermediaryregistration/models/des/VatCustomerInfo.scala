@@ -17,7 +17,7 @@
 package uk.gov.hmrc.iossintermediaryregistration.models.des
 
 import play.api.libs.functional.syntax.*
-import play.api.libs.json.{Json, OWrites, Reads, __}
+import play.api.libs.json.{__, Json, OWrites, Reads}
 import uk.gov.hmrc.iossintermediaryregistration.models.DesAddress
 
 import java.time.LocalDate

@@ -18,8 +18,6 @@ package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
 
 case class EtmpSchemeDetails(
                               commencementDate: String,

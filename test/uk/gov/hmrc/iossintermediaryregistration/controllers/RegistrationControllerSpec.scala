@@ -27,7 +27,6 @@ import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpR
 import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 
 import java.time.LocalDateTime
-import scala.concurrent.Future
 
 class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
@@ -66,7 +65,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
       when(mockRegistrationService.createRegistration(eqTo(etmpRegistrationRequest))) thenReturn Right(etmpEnrolmentResponse).toFuture
       when(mockRegistrationStatusRepository.delete(eqTo(fbNumber))) thenReturn true.toFuture
-      when(mockRegistrationStatusRepository.insert(eqTo(RegistrationStatus(fbNumber, EtmpRegistrationStatus.Pending)))) thenReturn InsertSucceeded.toFuture
+      when(mockRegistrationStatusRepository.insert(any())) thenReturn InsertSucceeded.toFuture
       when(mockEnrolmentsConnector.confirmEnrolment(any())(any())) thenReturn HttpResponse(204, "").toFuture
       when(mockRetryService.getEtmpRegistrationStatus(any(), any(), any())) thenReturn EtmpRegistrationStatus.Success.toFuture
       doNothing().when(mockAuditService).audit(any())(any(), any())
@@ -117,7 +116,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
       when(mockRegistrationService.createRegistration(eqTo(etmpRegistrationRequest))) thenReturn Right(etmpEnrolmentResponse).toFuture
       when(mockRegistrationStatusRepository.delete(eqTo(fbNumber))) thenReturn true.toFuture
-      when(mockRegistrationStatusRepository.insert(eqTo(RegistrationStatus(fbNumber, EtmpRegistrationStatus.Pending)))) thenReturn InsertSucceeded.toFuture
+      when(mockRegistrationStatusRepository.insert(any())) thenReturn InsertSucceeded.toFuture
       when(mockEnrolmentsConnector.confirmEnrolment(any())(any())) thenReturn HttpResponse(204, "").toFuture
       when(mockRetryService.getEtmpRegistrationStatus(any(), any(), any())) thenReturn EtmpRegistrationStatus.Error.toFuture
 

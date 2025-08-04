@@ -17,7 +17,6 @@
 package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.domain.Vrn
 
 case class EtmpCustomerIdentification(idType: EtmpIdType, idValue: String)
 

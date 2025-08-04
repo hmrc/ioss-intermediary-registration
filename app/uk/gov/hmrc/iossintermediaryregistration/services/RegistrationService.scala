@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.services
 
-import uk.gov.hmrc.domain.Vrn
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationConnector
 import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationHttpParser.CreateEtmpRegistrationResponse
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging

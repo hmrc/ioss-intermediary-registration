@@ -17,7 +17,6 @@
 package uk.gov.hmrc.iossintermediaryregistration.config
 
 import play.api.Configuration
-import uk.gov.hmrc.domain.Vrn
 
 import javax.inject.{Inject, Singleton}
 
