@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.connectors
 
-import play.api.http.Status.{CREATED, NOT_FOUND, OK}
+import play.api.http.Status.CREATED
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.*

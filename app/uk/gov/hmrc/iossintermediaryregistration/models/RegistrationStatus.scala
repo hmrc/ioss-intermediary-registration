@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.*
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStatus
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
-import play.api.libs.json._
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 case class RegistrationStatus(
                                subscriptionId: String,
@@ -33,7 +32,7 @@ object RegistrationStatus {
 
   val reads: Reads[RegistrationStatus] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "subscriptionId").read[String] and
@@ -44,7 +43,7 @@ object RegistrationStatus {
 
   val writes: OWrites[RegistrationStatus] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "subscriptionId").write[String] and

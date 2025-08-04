@@ -17,8 +17,7 @@
 package uk.gov.hmrc.iossintermediaryregistration.controllers
 
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Result}
-import uk.gov.hmrc.domain.Vrn
+import play.api.mvc.{Action, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.iossintermediaryregistration.config.AppConfig
 import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
@@ -26,15 +25,15 @@ import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{Authenticat
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.RegistrationStatus
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
-import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.{EtmpRegistrationRequest, EtmpRegistrationStatus}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrolmentErrorResponse, EtmpEnrolmentResponse}
+import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException}
 import uk.gov.hmrc.iossintermediaryregistration.repositories.RegistrationStatusRepository
 import uk.gov.hmrc.iossintermediaryregistration.services.{AuditService, RegistrationService, RetryService}
 import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.{Clock, LocalDateTime}
+import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
