@@ -27,6 +27,8 @@ import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStat
 import uk.gov.hmrc.iossintermediaryregistration.repositories.InsertResult.{AlreadyExists, InsertSucceeded}
 import uk.gov.hmrc.mongo.test.{CleanMongoCollectionSupport, PlayMongoRepositorySupport}
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class RegistrationStatusRepositorySpec extends AnyFreeSpec
@@ -46,7 +48,7 @@ class RegistrationStatusRepositorySpec extends AnyFreeSpec
     )
 
   val registrationStatus: RegistrationStatus = RegistrationStatus("100000001-id",
-    EtmpRegistrationStatus.Success)
+    EtmpRegistrationStatus.Success, Instant.now.truncatedTo(ChronoUnit.MILLIS))
 
   ".insert" - {
 
