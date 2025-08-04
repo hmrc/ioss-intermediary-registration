@@ -22,6 +22,10 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 
+import java.time.Instant
+import play.api.libs.json._
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
 case class RegistrationStatus(
                                subscriptionId: String,
                                status: EtmpRegistrationStatus,
