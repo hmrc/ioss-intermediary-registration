@@ -2,12 +2,15 @@ package uk.gov.hmrc.iossintermediaryregistration.generators
 
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
+import uk.gov.hmrc.iossintermediaryregistration.models.requests.SaveForLaterRequest
+import uk.gov.hmrc.iossintermediaryregistration.models.responses.SaveForLaterResponse
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 
 trait Generators {
 
@@ -204,7 +207,7 @@ trait Generators {
     }
   }
 
-  implicit lazy val arbitraryIban: Arbitrary[Iban] =
+  implicit lazy val arbitraryIban: Arbitrary[Iban] = {
     Arbitrary {
       Gen.oneOf(
         "GB94BARC10201530093459",
@@ -226,5 +229,47 @@ trait Generators {
         "GB42CPBK08005470328725"
       ).map(v => Iban(v).toOption.get)
     }
+  }
 
+  implicit val arbitrarySavedUserAnswers: Arbitrary[SavedUserAnswers] = {
+    Arbitrary {
+      for {
+        vrn <- arbitraryVrn.arbitrary
+        data = JsObject(Seq("savedUserAnswers" -> Json.toJson("userAnswers")))
+        now = Instant.now
+      } yield {
+        SavedUserAnswers(vrn = vrn, data = data, lastUpdated = now)
+      }
+    }
+  }
+
+  implicit val arbitrarySaveForLaterRequest: Arbitrary[SaveForLaterRequest] = {
+    Arbitrary {
+      for {
+        savedUserAnswers <- arbitrarySavedUserAnswers.arbitrary
+      } yield {
+        SaveForLaterRequest(
+          vrn = savedUserAnswers.vrn,
+          data = savedUserAnswers.data.as[JsObject]
+        )
+      }
+    }
+  }
+
+  implicit val arbitrarySaveForLaterResponse: Arbitrary[SaveForLaterResponse] = {
+    Arbitrary {
+      for {
+        savedUserAnswers <- arbitrarySavedUserAnswers.arbitrary
+        vatInfo <- arbitraryVatCustomerInfo.arbitrary
+      } yield {
+        SaveForLaterResponse(
+          vrn = savedUserAnswers.vrn,
+          data = savedUserAnswers.data,
+          vatInfo = vatInfo,
+          lastUpdated = savedUserAnswers.lastUpdated
+        )
+      }
+    }
+  }
 }
+

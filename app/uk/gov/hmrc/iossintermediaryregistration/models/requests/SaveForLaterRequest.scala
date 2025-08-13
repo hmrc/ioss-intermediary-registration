@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.requests
 
-import play.api.Configuration
+import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
+import uk.gov.hmrc.domain.Vrn
 
-import javax.inject.{Inject, Singleton}
+// TODO -> Test
+case class SaveForLaterRequest(
+                                vrn: Vrn,
+                                data: JsObject
+                              )
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+object SaveForLaterRequest {
 
-  val appName: String = config.get[String]("appName")
-
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
-  val saveForLaterTtl: Long = config.get[Long]("mongodb.timeToLiveInDays")
-
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
-
+  implicit val format: OFormat[SaveForLaterRequest] = Json.format[SaveForLaterRequest]
 }

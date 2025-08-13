@@ -8,3 +8,5 @@ POST        /validate-core-registration                       uk.gov.hmrc.iossin
 
 POST        /authorised/accept/confirm/:subscriptionId        uk.gov.hmrc.iossintermediaryregistration.controllers.EnrolmentsSubscriptionController.authoriseEnrolment(subscriptionId: String)
 
+POST        /save-for-later                                   uk.gov.hmrc.iossintermediaryregistration.controllers.SaveForLaterController.post()
+

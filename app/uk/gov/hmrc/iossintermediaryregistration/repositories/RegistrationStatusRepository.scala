@@ -18,14 +18,13 @@ package uk.gov.hmrc.iossintermediaryregistration.repositories
 
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.*
-import org.mongodb.scala.ObservableFuture
 import uk.gov.hmrc.iossintermediaryregistration.config.AppConfig
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.RegistrationStatus
 import uk.gov.hmrc.iossintermediaryregistration.repositories.InsertResult.{AlreadyExists, InsertSucceeded}
 import uk.gov.hmrc.iossintermediaryregistration.repositories.MongoErrors.Duplicate
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
