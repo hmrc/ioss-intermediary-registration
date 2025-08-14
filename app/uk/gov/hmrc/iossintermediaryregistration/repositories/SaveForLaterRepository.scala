@@ -22,8 +22,9 @@ import org.mongodb.scala.model.Filters
 import play.api.libs.json.Format
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.config.AppConfig
+import uk.gov.hmrc.iossintermediaryregistration.crypto.SavedUserAnswersEncryptor
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
-import uk.gov.hmrc.iossintermediaryregistration.models.SavedUserAnswers
+import uk.gov.hmrc.iossintermediaryregistration.models.{EncryptedSavedUserAnswers, SavedUserAnswers}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -37,12 +38,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SaveForLaterRepository @Inject()(
                                         mongoComponent: MongoComponent,
-                                        appConfig: AppConfig
+                                        appConfig: AppConfig,
+                                        encryptor: SavedUserAnswersEncryptor,
                                       )(implicit executionContext: ExecutionContext)
-  extends PlayMongoRepository[SavedUserAnswers](
+  extends PlayMongoRepository[EncryptedSavedUserAnswers](
     collectionName = "save-for-later-user-answers",
     mongoComponent = mongoComponent,
-    domainFormat = SavedUserAnswers.format,
+    domainFormat = EncryptedSavedUserAnswers.format,
     replaceIndexes = true,
     indexes = Seq(
       IndexModel(
@@ -66,12 +68,15 @@ class SaveForLaterRepository @Inject()(
     Filters.equal("vrn", toBson(vrn))
   }
 
-  // TODO -> Encryption
   def set(savedUserAnswers: SavedUserAnswers): Future[SavedUserAnswers] = {
+
+    val encryptedSavedUserAnswers: EncryptedSavedUserAnswers =
+      encryptor.encryptSavedUserAnswers(savedUserAnswers, savedUserAnswers.vrn)
+
     collection
       .replaceOne(
         filter = byVrn(savedUserAnswers.vrn),
-        replacement = savedUserAnswers,
+        replacement = encryptedSavedUserAnswers,
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
@@ -83,6 +88,11 @@ class SaveForLaterRepository @Inject()(
       .find(
         byVrn(vrn)
       ).headOption()
+      .map(_
+        .map { encryptedSavedUserAnswers =>
+          encryptor.decryptSavedUserAnswers(encryptedSavedUserAnswers, encryptedSavedUserAnswers.vrn)
+        }
+      )
   }
 
   def clear(vrn: Vrn): Future[Boolean] = {

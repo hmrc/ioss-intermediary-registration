@@ -20,7 +20,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Results.Created
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthenticatedControllerComponents
-import uk.gov.hmrc.iossintermediaryregistration.models.SavedUserAnswers.standardFormat
 import uk.gov.hmrc.iossintermediaryregistration.models.requests.SaveForLaterRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.SaveForLaterResponse
 import uk.gov.hmrc.iossintermediaryregistration.services.SaveForLaterService
@@ -37,7 +36,7 @@ class SaveForLaterController @Inject()(
   def post(): Action[SaveForLaterRequest] = cc.authAndRequireVat()(parse.json[SaveForLaterRequest]).async {
     implicit request =>
       saveForLaterService.saveUserAnswers(request.body).map { savedUserAnswers =>
-        Created(Json.toJson(savedUserAnswers)(standardFormat))
+        Created(Json.toJson(savedUserAnswers))
       }
   }
 

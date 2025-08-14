@@ -10,7 +10,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.models.SavedUserAnswers
-import uk.gov.hmrc.iossintermediaryregistration.models.SavedUserAnswers.standardFormat
 import uk.gov.hmrc.iossintermediaryregistration.models.requests.SaveForLaterRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.SaveForLaterResponse
 import uk.gov.hmrc.iossintermediaryregistration.services.SaveForLaterService
@@ -18,7 +17,7 @@ import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 
 import scala.concurrent.Future
 
-class SaveForLaterControllerSpec extends BaseSpec with BeforeAndAfterEach  {
+class SaveForLaterControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   private val mockSaveForLaterService: SaveForLaterService = mock[SaveForLaterService]
 
@@ -52,7 +51,7 @@ class SaveForLaterControllerSpec extends BaseSpec with BeforeAndAfterEach  {
           val result = route(application, request).value
 
           status(result) `mustBe` CREATED
-          contentAsJson(result) `mustBe` Json.toJson(savedUserAnswers)(standardFormat)
+          contentAsJson(result) `mustBe` Json.toJson(savedUserAnswers)
           verify(mockSaveForLaterService, times(1)).saveUserAnswers(eqTo(saveForLaterRequest))
         }
       }
@@ -72,7 +71,7 @@ class SaveForLaterControllerSpec extends BaseSpec with BeforeAndAfterEach  {
           verifyNoInteractions(mockSaveForLaterService)
         }
       }
-      
+
       "must throw an Exception when Save For Later Service returns a Future.failed" in {
 
         when(mockSaveForLaterService.saveUserAnswers(any())) thenReturn Future.failed(Exception("error"))

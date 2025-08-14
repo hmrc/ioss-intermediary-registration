@@ -30,30 +30,66 @@ case class SavedUserAnswers(
 
 object SavedUserAnswers {
 
-  val standardFormat: OFormat[SavedUserAnswers] = Json.format[SavedUserAnswers]
+  implicit val format: OFormat[SavedUserAnswers] = Json.format[SavedUserAnswers]
+//  val standardFormat: OFormat[SavedUserAnswers] = Json.format[SavedUserAnswers]
+//
+//  val reads: Reads[SavedUserAnswers] = {
+//
+//    import play.api.libs.functional.syntax.*
+//
+//    (
+//      (__ \ "vrn").read[Vrn] and
+//        (__ \ "data").read[JsValue] and
+//        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
+//      )(SavedUserAnswers.apply _)
+//  }
+//
+//  val writes: OWrites[SavedUserAnswers] = {
+//
+//    import play.api.libs.functional.syntax.*
+//
+//    (
+//      (__ \ "vrn").write[Vrn] and
+//        (__ \ "data").write[JsValue] and
+//        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
+//      )(savedUserAnswers => Tuple.fromProductTyped(savedUserAnswers))
+//  }
+//
+//  implicit val format: OFormat[SavedUserAnswers] = OFormat(reads, writes)
+}
 
-  val reads: Reads[SavedUserAnswers] = {
+case class EncryptedSavedUserAnswers(
+                                      vrn: Vrn,
+                                      data: String,
+                                      lastUpdated: Instant
+                                    )
+
+object EncryptedSavedUserAnswers {
+
+  val standardFormat: OFormat[EncryptedSavedUserAnswers] = Json.format[EncryptedSavedUserAnswers]
+
+  val reads: Reads[EncryptedSavedUserAnswers] = {
 
     import play.api.libs.functional.syntax.*
 
     (
       (__ \ "vrn").read[Vrn] and
-        (__ \ "data").read[JsValue] and
+        (__ \ "data").read[String] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      )(SavedUserAnswers.apply _)
+      )(EncryptedSavedUserAnswers.apply _)
   }
 
-  val writes: OWrites[SavedUserAnswers] = {
+  val writes: OWrites[EncryptedSavedUserAnswers] = {
 
     import play.api.libs.functional.syntax.*
 
     (
       (__ \ "vrn").write[Vrn] and
-        (__ \ "data").write[JsValue] and
+        (__ \ "data").write[String] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-      )(savedUserAnswers => Tuple.fromProductTyped(savedUserAnswers))
+      )(encryptedSavedUserAnswers => Tuple.fromProductTyped(encryptedSavedUserAnswers))
   }
 
-  implicit val format: OFormat[SavedUserAnswers] = OFormat(reads, writes)
+  implicit val format: OFormat[EncryptedSavedUserAnswers] = OFormat(reads, writes)
 }
 

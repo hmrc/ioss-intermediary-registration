@@ -2,7 +2,7 @@ package uk.gov.hmrc.iossintermediaryregistration.models
 
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
-import uk.gov.hmrc.iossintermediaryregistration.models.SavedUserAnswers.standardFormat
+import uk.gov.hmrc.iossintermediaryregistration.models.EncryptedSavedUserAnswers.standardFormat
 
 class SavedUserAnswersSpec extends BaseSpec {
 
@@ -24,8 +24,8 @@ class SavedUserAnswersSpec extends BaseSpec {
         lastUpdated = savedUserAnswers.lastUpdated
       )
 
-      Json.toJson(expectedResult)(standardFormat) `mustBe` json
-      json.validate[SavedUserAnswers](standardFormat) `mustBe` JsSuccess(expectedResult)
+      Json.toJson(expectedResult) `mustBe` json
+      json.validate[SavedUserAnswers] `mustBe` JsSuccess(expectedResult)
     }
 
     "must handle missing fields during deserialization" in {
@@ -42,6 +42,43 @@ class SavedUserAnswersSpec extends BaseSpec {
       )
 
       expectedJson.validate[SavedUserAnswers] `mustBe` a[JsError]
+    }
+  }
+
+  "EncryptedSavedUserAnswers" - {
+
+    "must serialise/deserialise to and from EncryptedSavedUserAnswers" in {
+
+      val json = Json.obj(
+        "vrn" -> savedUserAnswers.vrn,
+        "data" -> savedUserAnswers.data.toString,
+        "lastUpdated" -> savedUserAnswers.lastUpdated
+      )
+
+      val expectedResult = EncryptedSavedUserAnswers(
+        vrn = savedUserAnswers.vrn,
+        data = savedUserAnswers.data.toString,
+        lastUpdated = savedUserAnswers.lastUpdated
+      )
+
+      Json.toJson(expectedResult)(standardFormat) `mustBe` json
+      json.validate[EncryptedSavedUserAnswers](standardFormat) `mustBe` JsSuccess(expectedResult)
+    }
+
+    "must handle missing fields during deserialization" in {
+
+      val expectedJson = Json.obj()
+
+      expectedJson.validate[EncryptedSavedUserAnswers] `mustBe` a[JsError]
+    }
+
+    "must handle invalid data during deserialization" in {
+
+      val expectedJson = Json.obj(
+        "vrn" -> 12345
+      )
+
+      expectedJson.validate[EncryptedSavedUserAnswers] `mustBe` a[JsError]
     }
   }
 }
