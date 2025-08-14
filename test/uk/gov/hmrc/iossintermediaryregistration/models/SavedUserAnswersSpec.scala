@@ -2,8 +2,8 @@ package uk.gov.hmrc.iossintermediaryregistration.models
 
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
+import uk.gov.hmrc.iossintermediaryregistration.models.SavedUserAnswers.standardFormat
 
-// TODO -> Fix mongo date issue
 class SavedUserAnswersSpec extends BaseSpec {
 
   private val savedUserAnswers: SavedUserAnswers = arbitrarySavedUserAnswers.arbitrary.sample.value
@@ -24,8 +24,8 @@ class SavedUserAnswersSpec extends BaseSpec {
         lastUpdated = savedUserAnswers.lastUpdated
       )
 
-      Json.toJson(expectedResult) `mustBe` json
-      json.validate[SavedUserAnswers] `mustBe` JsSuccess(expectedResult)
+      Json.toJson(expectedResult)(standardFormat) `mustBe` json
+      json.validate[SavedUserAnswers](standardFormat) `mustBe` JsSuccess(expectedResult)
     }
 
     "must handle missing fields during deserialization" in {

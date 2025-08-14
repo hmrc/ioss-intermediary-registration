@@ -17,7 +17,7 @@
 package uk.gov.hmrc.iossintermediaryregistration.models.des
 
 import play.api.libs.functional.syntax.*
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites, Reads, __}
 import uk.gov.hmrc.iossintermediaryregistration.models.DesAddress
 
 import java.time.LocalDate
@@ -63,7 +63,7 @@ object VatCustomerInfo {
     )
   }
 
-  implicit val desReads: Reads[VatCustomerInfo] =
+  val desReads: Reads[VatCustomerInfo] = {
     (
       (__ \ "approvedInformation" \ "PPOB" \ "address").read[DesAddress] and
         (__ \ "approvedInformation" \ "customerDetails" \ "effectiveRegistrationDate").readNullable[LocalDate] and
@@ -75,6 +75,10 @@ object VatCustomerInfo {
         (__ \ "approvedInformation" \ "customerDetails" \ "singleMarketIndicator").read[Boolean] and
         (__ \ "approvedInformation" \ "deregistration" \ "effectDateOfCancellation").readNullable[LocalDate]
       )(VatCustomerInfo.fromDesPayload _)
+  }
+
+  implicit val standardReads: Reads[VatCustomerInfo] =
+    Json.reads[VatCustomerInfo]
 
   implicit val writes: OWrites[VatCustomerInfo] =
     Json.writes[VatCustomerInfo]

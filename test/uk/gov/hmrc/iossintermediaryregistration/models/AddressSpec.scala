@@ -1,11 +1,11 @@
 package uk.gov.hmrc.iossintermediaryregistration.models
 
+import generators.Generators
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsSuccess, Json}
-import uk.gov.hmrc.iossintermediaryregistration.generators.Generators
 
 class AddressSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with OptionValues {
 

@@ -1,4 +1,4 @@
-package uk.gov.hmrc.iossintermediaryregistration.generators
+package generators
 
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -231,7 +231,7 @@ trait Generators {
     }
   }
 
-  implicit val arbitrarySavedUserAnswers: Arbitrary[SavedUserAnswers] = {
+  implicit lazy val arbitrarySavedUserAnswers: Arbitrary[SavedUserAnswers] = {
     Arbitrary {
       for {
         vrn <- arbitraryVrn.arbitrary
@@ -243,7 +243,7 @@ trait Generators {
     }
   }
 
-  implicit val arbitrarySaveForLaterRequest: Arbitrary[SaveForLaterRequest] = {
+  implicit lazy val arbitrarySaveForLaterRequest: Arbitrary[SaveForLaterRequest] = {
     Arbitrary {
       for {
         savedUserAnswers <- arbitrarySavedUserAnswers.arbitrary
@@ -256,7 +256,7 @@ trait Generators {
     }
   }
 
-  implicit val arbitrarySaveForLaterResponse: Arbitrary[SaveForLaterResponse] = {
+  implicit lazy val arbitrarySaveForLaterResponse: Arbitrary[SaveForLaterResponse] = {
     Arbitrary {
       for {
         savedUserAnswers <- arbitrarySavedUserAnswers.arbitrary

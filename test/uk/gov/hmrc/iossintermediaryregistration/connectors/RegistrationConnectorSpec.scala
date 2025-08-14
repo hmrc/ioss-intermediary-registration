@@ -19,7 +19,7 @@ import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrol
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.*
 import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpRegistrationRequest
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 
 class RegistrationConnectorSpec extends BaseSpec with WireMockHelper {
 

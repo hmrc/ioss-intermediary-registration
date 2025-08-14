@@ -19,7 +19,6 @@ package uk.gov.hmrc.iossintermediaryregistration.models.requests
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 import uk.gov.hmrc.domain.Vrn
 
-// TODO -> Test
 case class SaveForLaterRequest(
                                 vrn: Vrn,
                                 data: JsObject

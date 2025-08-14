@@ -23,7 +23,6 @@ import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 
 import java.time.Instant
 
-// TODO -> Test
 case class SaveForLaterResponse(
                                  vrn: Vrn,
                                  data: JsValue,

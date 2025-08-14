@@ -28,7 +28,7 @@ object VatCustomerInfoHttpParser extends BaseHttpParser {
 
   implicit object VatCustomerInfoReads extends HttpReads[VatCustomerInfoResponse] {
     override def read(method: String, url: String, response: HttpResponse): VatCustomerInfoResponse =
-      parseResponse[VatCustomerInfo](response)
+      parseResponse[VatCustomerInfo](response)(VatCustomerInfo.desReads)
   }
 }
 

@@ -30,6 +30,7 @@ case class SavedUserAnswers(
 
 object SavedUserAnswers {
 
+  val standardFormat: OFormat[SavedUserAnswers] = Json.format[SavedUserAnswers]
 
   val reads: Reads[SavedUserAnswers] = {
 
