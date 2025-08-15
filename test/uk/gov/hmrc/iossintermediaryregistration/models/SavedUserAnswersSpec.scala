@@ -2,7 +2,8 @@ package uk.gov.hmrc.iossintermediaryregistration.models
 
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
-import uk.gov.hmrc.iossintermediaryregistration.models.EncryptedSavedUserAnswers.standardFormat
+
+import java.time.temporal.ChronoUnit
 
 class SavedUserAnswersSpec extends BaseSpec {
 
@@ -52,17 +53,21 @@ class SavedUserAnswersSpec extends BaseSpec {
       val json = Json.obj(
         "vrn" -> savedUserAnswers.vrn,
         "data" -> savedUserAnswers.data.toString,
-        "lastUpdated" -> savedUserAnswers.lastUpdated
+        "lastUpdated" -> Json.obj(
+          "$date" -> Json.obj(
+            "$numberLong" -> savedUserAnswers.lastUpdated.toEpochMilli.toString
+          )
+        )
       )
 
       val expectedResult = EncryptedSavedUserAnswers(
         vrn = savedUserAnswers.vrn,
         data = savedUserAnswers.data.toString,
-        lastUpdated = savedUserAnswers.lastUpdated
+        lastUpdated = savedUserAnswers.lastUpdated.truncatedTo(ChronoUnit.MILLIS)
       )
 
-      Json.toJson(expectedResult)(standardFormat) `mustBe` json
-      json.validate[EncryptedSavedUserAnswers](standardFormat) `mustBe` JsSuccess(expectedResult)
+      Json.toJson(expectedResult) `mustBe` json
+      json.validate[EncryptedSavedUserAnswers] `mustBe` JsSuccess(expectedResult)
     }
 
     "must handle missing fields during deserialization" in {

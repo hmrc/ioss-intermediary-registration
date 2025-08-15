@@ -31,31 +31,6 @@ case class SavedUserAnswers(
 object SavedUserAnswers {
 
   implicit val format: OFormat[SavedUserAnswers] = Json.format[SavedUserAnswers]
-//  val standardFormat: OFormat[SavedUserAnswers] = Json.format[SavedUserAnswers]
-//
-//  val reads: Reads[SavedUserAnswers] = {
-//
-//    import play.api.libs.functional.syntax.*
-//
-//    (
-//      (__ \ "vrn").read[Vrn] and
-//        (__ \ "data").read[JsValue] and
-//        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-//      )(SavedUserAnswers.apply _)
-//  }
-//
-//  val writes: OWrites[SavedUserAnswers] = {
-//
-//    import play.api.libs.functional.syntax.*
-//
-//    (
-//      (__ \ "vrn").write[Vrn] and
-//        (__ \ "data").write[JsValue] and
-//        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-//      )(savedUserAnswers => Tuple.fromProductTyped(savedUserAnswers))
-//  }
-//
-//  implicit val format: OFormat[SavedUserAnswers] = OFormat(reads, writes)
 }
 
 case class EncryptedSavedUserAnswers(
@@ -65,8 +40,6 @@ case class EncryptedSavedUserAnswers(
                                     )
 
 object EncryptedSavedUserAnswers {
-
-  val standardFormat: OFormat[EncryptedSavedUserAnswers] = Json.format[EncryptedSavedUserAnswers]
 
   val reads: Reads[EncryptedSavedUserAnswers] = {
 
