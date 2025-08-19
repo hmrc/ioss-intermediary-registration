@@ -1,7 +1,6 @@
 package uk.gov.hmrc.iossintermediaryregistration.testutils
 
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*

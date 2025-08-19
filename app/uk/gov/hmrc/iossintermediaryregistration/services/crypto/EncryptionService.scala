@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.services.crypto
 
 import play.api.Configuration
+import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, PlainText, SymmetricCryptoFactory}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()(config: Configuration) {
+class EncryptionService @Inject()(configuration: Configuration) {
 
-  val appName: String = config.get[String]("appName")
+  protected lazy val crypto: Encrypter with Decrypter = SymmetricCryptoFactory.aesGcmCryptoFromConfig(
+    baseConfigKey = "mongodb.encryption",
+    config = configuration.underlying
+  )
 
-  val registrationStatusTtl: Long = config.get[Long]("mongodb.timeToLiveInHours")
-  val saveForLaterTtl: Long = config.get[Long]("mongodb.timeToLiveInDays")
+  def encryptField(rawValue: String): String = {
+    crypto.encrypt(PlainText(rawValue)).value
+  }
 
-  val maxRetryCount: Int = config.get[Int]("features.maxRetryCount")
-  val delay: Int = config.get[Int]("features.delay")
-
-  val encryptionKey: String = config.get[String]("mongodb.encryption.key")
+  def decryptField(decryptedValue: String): String = {
+    crypto.decrypt(Crypted(decryptedValue)).value
+  }
 }

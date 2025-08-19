@@ -72,8 +72,6 @@ class ValidateCoreRegistrationControllerSpec extends BaseSpec {
 
         val result = route(app, request).value
 
-        println(result.value)
-
         status(result) mustEqual OK
       }
     }

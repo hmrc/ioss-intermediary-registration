@@ -4,7 +4,6 @@ import org.mockito.ArgumentMatchers.eq as eqTo
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.test.Helpers.running
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationConnector
 import uk.gov.hmrc.iossintermediaryregistration.models.*
@@ -13,11 +12,8 @@ import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpR
 import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 
 import java.time.LocalDateTime
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
-
-  implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
 
   private val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
   private val registrationService = new RegistrationService(mockRegistrationConnector)
@@ -51,5 +47,5 @@ class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
   }
-
 }
+

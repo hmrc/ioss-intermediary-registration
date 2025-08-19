@@ -22,11 +22,11 @@ import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationRequest
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RegistrationService @Inject()(
                                      registrationConnector: RegistrationConnector
-                                   )(implicit ec: ExecutionContext) extends Logging {
+                                   ) extends Logging {
 
   def createRegistration(etmpRegistrationRequest: EtmpRegistrationRequest): Future[CreateEtmpRegistrationResponse] =
     registrationConnector.createRegistration(etmpRegistrationRequest)
