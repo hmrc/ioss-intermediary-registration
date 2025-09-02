@@ -31,7 +31,7 @@ class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
           processingDateTime = LocalDateTime.now(stubClock),
           formBundleNumber = "123456789",
           vrn = vrn.vrn,
-          iossReference = "test",
+          intermediary = "test",
           businessPartner = "test businessPartner"
         )
 
