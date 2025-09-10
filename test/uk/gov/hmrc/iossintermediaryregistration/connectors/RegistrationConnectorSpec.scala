@@ -9,12 +9,14 @@ import play.api.http.HeaderNames.{AUTHORIZATION, CONTENT_TYPE}
 import play.api.http.MimeTypes
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.test.Helpers.running
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationHttpParser.serviceName
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.binders.Format.eisDateTimeFormatter
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.EtmpDisplayRegistration
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrolmentErrorResponse, EtmpEnrolmentResponse, EtmpErrorDetail}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.*
 import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpRegistrationRequest
@@ -29,17 +31,21 @@ class RegistrationConnectorSpec extends BaseSpec with WireMockHelper {
         "microservice.services.create-registration.host" -> "127.0.0.1",
         "microservice.services.create-registration.port" -> server.port,
         "microservice.services.create-registration.authorizationToken" -> "auth-token",
-        "microservice.services.create-registration.environment" -> "test-environment"
+        "microservice.services.create-registration.environment" -> "test-environment",
+        "microservice.services.display-registration.host" -> "127.0.0.1",
+        "microservice.services.display-registration.port" -> server.port,
+        "microservice.services.display-registration.authorizationToken" -> "auth-token",
+        "microservice.services.display-registration.environment" -> "test-environment"
       )
       .build()
-
-  private val createRegistrationUrl = "/ioss-intermediary-registration-stub/vec/iosssubscription/subdatatransfer/v1"
 
   private val fixedDelay = 21000
 
   private val timeOutSpan = 30
 
   ".createRegistration" - {
+
+    val createRegistrationUrl = "/ioss-intermediary-registration-stub/vec/iosssubscription/subdatatransfer/v1"
 
     "should return an ETMP Enrolment Response correctly" in {
 
@@ -191,4 +197,111 @@ class RegistrationConnectorSpec extends BaseSpec with WireMockHelper {
     }
   }
 
+  ".getRegistration" - {
+
+    val getRegistrationUrl = s"/ioss-intermediary-registration-stub/vec/iossregistration/viewreg/v1/$intermediaryNumber"
+
+    "must return Right(EtmpDisplayRegistration) when JSON is parsed correctly" in {
+
+      val etmpDisplayRegistration: EtmpDisplayRegistration = arbitraryEtmpDisplayRegistration.arbitrary.sample.value
+
+      val responseJson: String = Json.toJson(etmpDisplayRegistration)(etmpDisplayRegistrationWrites).toString
+
+      val app = application
+
+      server.stubFor(
+        get(urlEqualTo(getRegistrationUrl))
+          .withHeader(AUTHORIZATION, equalTo("Bearer auth-token"))
+          .withHeader(CONTENT_TYPE, equalTo(MimeTypes.JSON))
+          .willReturn(aResponse()
+            .withStatus(OK)
+            .withBody(responseJson))
+      )
+
+      running(application) {
+
+        val connector = app.injector.instanceOf[RegistrationConnector]
+
+        val result = connector.getRegistration(intermediaryNumber: String).futureValue
+
+        result `mustBe` Right(etmpDisplayRegistration)
+      }
+    }
+
+    "must return Left(InvalidJson) when JSON is not parsed correctly" in {
+
+      val responseJson: String = Json.toJson("test" -> "invalid").toString
+
+      val app = application
+
+      server.stubFor(
+        get(urlEqualTo(getRegistrationUrl))
+          .withHeader(AUTHORIZATION, equalTo("Bearer auth-token"))
+          .withHeader(CONTENT_TYPE, equalTo(MimeTypes.JSON))
+          .willReturn(aResponse()
+            .withStatus(OK)
+            .withBody(responseJson))
+      )
+
+      running(application) {
+
+        val connector = app.injector.instanceOf[RegistrationConnector]
+
+        val result = connector.getRegistration(intermediaryNumber: String).futureValue
+
+        result `mustBe` Left(InvalidJson)
+      }
+    }
+
+    Seq((NOT_FOUND, ServerError), (CONFLICT, ServerError), (INTERNAL_SERVER_ERROR, ServerError), (BAD_REQUEST, ServerError), (SERVICE_UNAVAILABLE, ServerError), (123, ServerError))
+      .foreach { error =>
+        s"must return Left($error) when server responds with an error" in {
+
+          val responseBody = ""
+
+          val app = application
+
+          server.stubFor(
+            get(urlEqualTo(getRegistrationUrl))
+              .withHeader(AUTHORIZATION, equalTo("Bearer auth-token"))
+              .withHeader(CONTENT_TYPE, equalTo(MimeTypes.JSON))
+              .willReturn(aResponse()
+                .withStatus(error._1)
+                .withBody(responseBody))
+          )
+
+          running(application) {
+
+            val connector = app.injector.instanceOf[RegistrationConnector]
+
+            val result = connector.getRegistration(intermediaryNumber: String).futureValue
+
+            result `mustBe` Left(error._2)
+          }
+        }
+      }
+
+    "must return Error Response when server responds with Http Exception" in {
+
+      val app = application
+
+      server.stubFor(
+        get(urlEqualTo(getRegistrationUrl))
+          .withHeader(AUTHORIZATION, equalTo("Bearer auth-token"))
+          .withHeader(CONTENT_TYPE, equalTo(MimeTypes.JSON))
+          .willReturn(aResponse()
+            .withStatus(GATEWAY_TIMEOUT)
+            .withFixedDelay(fixedDelay))
+      )
+
+      running(app) {
+
+        val connector = app.injector.instanceOf[RegistrationConnector]
+        whenReady(connector.getRegistration(intermediaryNumber), Timeout(Span(timeOutSpan, Seconds))) { exp =>
+          exp.isLeft `mustBe` true
+          exp.left.toOption.get `mustBe` a[ErrorResponse]
+        }
+      }
+    }
+  }
 }

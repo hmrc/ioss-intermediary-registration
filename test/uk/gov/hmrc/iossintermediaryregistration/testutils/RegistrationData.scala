@@ -51,7 +51,7 @@ object RegistrationData extends BaseSpec {
     tradingNames = Seq(arbitrary[EtmpTradingName].sample.value),
     schemeDetails = etmpSchemeDetails,
     bankDetails = etmpBankDetails,
-    intermediaryDetails = Some(arbitrary[EtmpIntermediaryDetails].sample.value),
+    intermediaryDetails = Some(arbitraryIntermediaryDetails.arbitrary.sample.value),
     otherAddress = Some(arbitrary[EtmpOtherAddress].sample.value)
   )
 

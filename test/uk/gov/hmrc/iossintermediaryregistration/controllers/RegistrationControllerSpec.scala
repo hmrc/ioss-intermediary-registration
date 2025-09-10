@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.time.{Seconds, Span}
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.AnyContentAsJson
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -17,6 +17,7 @@ import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthorisedMa
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStatus
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, ServiceUnavailable}
 import uk.gov.hmrc.iossintermediaryregistration.repositories.InsertResult.InsertSucceeded
@@ -27,6 +28,7 @@ import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpR
 import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 
 import java.time.LocalDateTime
+import scala.concurrent.Future
 
 class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
@@ -37,6 +39,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
   private val mockAuditService: AuditService = mock[AuditService]
 
   private lazy val createRegistrationRoute: String = routes.RegistrationController.createRegistration().url
+  private lazy val getRegistrationRoute: String = routes.RegistrationController.getRegistration(intermediaryNumber).url
 
   override def beforeEach(): Unit = {
     reset(mockRegistrationService)
@@ -172,7 +175,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         status(result) mustBe CONFLICT
         contentAsJson(result) mustBe Json.toJson(
           s"Business Partner already has an active IOSS Subscription for this regime with error code ${etmpEnrolmentError.code}" +
-          s"with message body ${etmpEnrolmentError.body}"
+            s"with message body ${etmpEnrolmentError.body}"
         )
         verify(mockAuditService, times(1)).audit(eqTo(expectedAuditEvent))(any(), any())
       }
@@ -213,4 +216,49 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
     }
   }
 
+  "getRegistration" - {
+
+    val registrationWrapper: RegistrationWrapper = arbitraryRegistrationWrapper.arbitrary.sample.value
+
+    "must return OK with a Registration Wrapper JSON payload when one is successfully retrieved" in {
+
+      when(mockRegistrationService.getRegistrationWrapper(any(), any())(any())) thenReturn registrationWrapper.toFuture
+
+      val application = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .build()
+
+      val jsonRegistrationWrapper: JsValue = Json.toJson(registrationWrapper)
+
+      running(application) {
+
+        val request = FakeRequest(GET, getRegistrationRoute)
+
+        val result = route(application, request).value
+
+        status(result) `mustBe` OK
+        contentAsJson(result) `mustBe` jsonRegistrationWrapper
+        verify(mockRegistrationService, times(1)).getRegistrationWrapper(eqTo(intermediaryNumber), eqTo(vrn))(any())
+      }
+    }
+
+    "must return an Internal Server Error when the server throws an error" in {
+
+      when(mockRegistrationService.getRegistrationWrapper(any(), any())(any())) thenReturn Future.failed(EtmpException("ERROR"))
+
+      val application = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, getRegistrationRoute)
+
+        val result = route(application, request).value
+
+        status(result) `mustBe` INTERNAL_SERVER_ERROR
+        verify(mockRegistrationService, times(1)).getRegistrationWrapper(eqTo(intermediaryNumber), eqTo(vrn))(any())
+      }
+    }
+  }
 }

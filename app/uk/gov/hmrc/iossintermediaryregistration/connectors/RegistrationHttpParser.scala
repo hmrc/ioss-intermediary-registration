@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.connectors
 
-import play.api.http.Status.CREATED
+import play.api.http.Status.{CREATED, OK}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.*
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.EtmpDisplayRegistration
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrolmentErrorResponse, EtmpEnrolmentResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.*
 
@@ -28,6 +29,7 @@ object RegistrationHttpParser extends BaseHttpParser {
   override val serviceName: String = "etmp registration"
 
   type CreateEtmpRegistrationResponse = Either[ErrorResponse, EtmpEnrolmentResponse]
+  type EtmpDisplayRegistrationResponse = Either[ErrorResponse, EtmpDisplayRegistration]
 
   implicit object CreateRegistrationReads extends HttpReads[CreateEtmpRegistrationResponse] {
     override def read(method: String, url: String, response: HttpResponse): CreateEtmpRegistrationResponse =
@@ -58,4 +60,22 @@ object RegistrationHttpParser extends BaseHttpParser {
       }
   }
 
+  implicit object EtmpDisplayRegistrationReads extends HttpReads[EtmpDisplayRegistrationResponse] {
+
+    override def read(method: String, url: String, response: HttpResponse): EtmpDisplayRegistrationResponse = {
+      response.status match {
+        case OK =>
+          response.json.validate[EtmpDisplayRegistration] match {
+            case JsSuccess(etmpDisplayRegistrationResponse, _) => Right(etmpDisplayRegistrationResponse)
+            case JsError(errors) =>
+              logger.error(s"Failed trying to parse EtmpDisplayRegistration response JSON with response status: ${response.status}, with errors: $errors.")
+              Left(InvalidJson)
+          }
+
+        case status =>
+          logger.error(s"An unknown error occurred when trying to retrieve EtmpDisplayRegistration with status: $status and response body: ${response.body}.")
+          Left(ServerError)
+      }
+    }
+  }
 }

@@ -21,6 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 case class EtmpIntermediaryDetails(otherIossIntermediaryRegistrations: Seq[EtmpOtherIossIntermediaryRegistrations])
 
 object EtmpIntermediaryDetails {
+  
   implicit val format: OFormat[EtmpIntermediaryDetails] = Json.format[EtmpIntermediaryDetails]
 }
 
