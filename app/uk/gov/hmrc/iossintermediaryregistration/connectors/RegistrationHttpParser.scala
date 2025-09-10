@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.connectors
 
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.{CREATED, NOT_FOUND, OK}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.EtmpDisplayRegistration
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.AmendRegistrationResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrolmentErrorResponse, EtmpEnrolmentResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.*
 
@@ -30,6 +31,7 @@ object RegistrationHttpParser extends BaseHttpParser {
 
   type CreateEtmpRegistrationResponse = Either[ErrorResponse, EtmpEnrolmentResponse]
   type EtmpDisplayRegistrationResponse = Either[ErrorResponse, EtmpDisplayRegistration]
+  type AmendEtmpRegistrationResponse = Either[ErrorResponse, AmendRegistrationResponse]
 
   implicit object CreateRegistrationReads extends HttpReads[CreateEtmpRegistrationResponse] {
     override def read(method: String, url: String, response: HttpResponse): CreateEtmpRegistrationResponse =
@@ -77,5 +79,23 @@ object RegistrationHttpParser extends BaseHttpParser {
           Left(ServerError)
       }
     }
+  }
+
+  implicit object AmendRegistrationReads extends HttpReads[AmendEtmpRegistrationResponse] {
+    override def read(method: String, url: String, response: HttpResponse): AmendEtmpRegistrationResponse =
+      response.status match {
+        case OK => response.json.validate[AmendRegistrationResponse] match {
+          case JsSuccess(amendRegistrationResponse, _) => Right(amendRegistrationResponse)
+          case JsError(errors) =>
+            logger.error(s"Failed trying to parse JSONwith status ${response.status} and body ${response.body} errors $errors")
+            Left(InvalidJson)
+        }
+        case NOT_FOUND =>
+          logger.warn(s"url not reachable")
+          Left(NotFound)
+        case status =>
+          logger.error(s"Unknown error happened on amend registration $status with body ${response.body}")
+          Left(ServerError)
+      }
   }
 }

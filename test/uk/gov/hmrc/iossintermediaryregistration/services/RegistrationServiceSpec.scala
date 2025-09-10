@@ -10,6 +10,8 @@ import uk.gov.hmrc.iossintermediaryregistration.connectors.{GetVatInfoConnector,
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayRegistration, RegistrationWrapper}
+import uk.gov.hmrc.iossintermediaryregistration.models.amend.AmendResult.AmendSucceeded
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.AmendRegistrationResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpException, NotFound, ServerError}
 import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpRegistrationRequest
@@ -133,6 +135,31 @@ class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
         }
         verify(mockGetVatInfoConnector, times(1)).getVatCustomerDetails(eqTo(vrn))(any())
         verify(mockRegistrationConnector, times(1)).getRegistration(eqTo(intermediaryNumber))
+      }
+    }
+  }
+
+  ".amendRegistration" - {
+
+    "must create registration request and return a successful ETMP enrolment response" in {
+
+      val amendRegistrationResponse = AmendRegistrationResponse(
+        processingDateTime = LocalDateTime.now(stubClock),
+        formBundleNumber = "123456789",
+        vrn = vrn.vrn,
+        iossReference = "test",
+        businessPartner = "test businessPartner"
+      )
+
+      when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest)) thenReturn Right(amendRegistrationResponse).toFuture
+
+      val app = applicationBuilder
+        .build()
+
+      running(app) {
+
+        registrationService.amendRegistration(etmpAmendRegistrationRequest).futureValue mustBe AmendSucceeded
+        verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
       }
     }
   }

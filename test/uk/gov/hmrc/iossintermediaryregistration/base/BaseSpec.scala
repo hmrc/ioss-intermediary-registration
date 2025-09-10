@@ -29,13 +29,15 @@ import play.api.libs.json.{Writes, __}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthAction, FakeAuthAction}
-import uk.gov.hmrc.iossintermediaryregistration.models.DesAddress
+import uk.gov.hmrc.iossintermediaryregistration.models.{Bic, DesAddress, Iban}
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayEuRegistrationDetails, EtmpDisplayRegistration, EtmpDisplaySchemeDetails}
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpIdType.VRN
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.*
 
 import java.time.format.DateTimeFormatter
-import java.time.{Clock, LocalDate, ZoneId}
+import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
 import java.util.Locale
 
 trait BaseSpec
@@ -49,6 +51,7 @@ trait BaseSpec
     with Generators {
 
   protected val vrn: Vrn = Vrn("123456789")
+  protected val iossNumber: String = "IM9001234567"
 
   val stubClock: Clock = Clock.fixed(LocalDate.now.atStartOfDay(ZoneId.systemDefault).toInstant, ZoneId.systemDefault)
 
@@ -101,6 +104,70 @@ trait BaseSpec
         (__ \ "adminUse").write[EtmpAdminUse]
       )(etmpDisplayRegistration => Tuple.fromProductTyped(etmpDisplayRegistration))
   }
+
+  val registrationRequest: EtmpRegistrationRequest = EtmpRegistrationRequest(
+    administration = EtmpAdministration(EtmpMessageType.IOSSIntCreate),
+    customerIdentification = EtmpCustomerIdentification(VRN, vrn.vrn),
+    tradingNames = Seq(EtmpTradingName(tradingName = "Some Trading Name")),
+    intermediaryDetails = None,
+    otherAddress = None,
+    schemeDetails = EtmpSchemeDetails(
+      commencementDate = LocalDateTime.now().format(dateFormatter),
+      euRegistrationDetails = Seq(
+        EtmpEuRegistrationDetails(
+          countryOfRegistration = "DE",
+          traderId = VatNumberTraderId(vatNumber = "DE123456789"),
+          tradingName = "Some Trading Name",
+          fixedEstablishmentAddressLine1 = "Line 1",
+          fixedEstablishmentAddressLine2 = Some("Line 2"),
+          townOrCity = "Town",
+          regionOrState = Some("Region"),
+          postcode = Some("AB12 3CD")
+        )
+      ),
+      previousEURegistrationDetails = Seq(
+        EtmpPreviousEuRegistrationDetails(
+          issuedBy = "DE",
+          registrationNumber = "DE123",
+          schemeType = SchemeType.IOSSWithIntermediary,
+          intermediaryNumber = Some("IM123456789")
+        )
+      ),
+      websites = Some(Seq(
+        EtmpWebsite(websiteAddress = "www.example-one.co.uk"),
+        EtmpWebsite(websiteAddress = "www.example-two.co.uk")
+      )),
+      contactName = "Mr Test",
+      businessTelephoneNumber = "0123 456789",
+      businessEmailId = "mrtest@example.co.uk",
+      nonCompliantReturns = Some("1"),
+      nonCompliantPayments = Some("2")
+    ),
+    bankDetails = EtmpBankDetails(
+      accountName = "Mr Test",
+      bic = Some(Bic("ABCDEF2A").get),
+      iban = Iban("GB33BUKB20201555555555").toOption.get
+    )
+  )
+
+  def etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = EtmpAmendRegistrationRequest(
+    administration = registrationRequest.administration.copy(messageType = EtmpMessageType.IOSSIntAmend),
+    changeLog = EtmpAmendRegistrationChangeLog(
+      tradingNames = true,
+      fixedEstablishments = true,
+      contactDetails = true,
+      bankDetails = true,
+      reRegistration = false,
+      otherAddress = true
+    ),
+    customerIdentification = EtmpAmendCustomerIdentification(iossNumber),
+    tradingNames = registrationRequest.tradingNames,
+    intermediaryDetails = registrationRequest.intermediaryDetails,
+    otherAddress = registrationRequest.otherAddress,
+    schemeDetails = registrationRequest.schemeDetails,
+    bankDetails = registrationRequest.bankDetails
+  )
+
 }
 
 

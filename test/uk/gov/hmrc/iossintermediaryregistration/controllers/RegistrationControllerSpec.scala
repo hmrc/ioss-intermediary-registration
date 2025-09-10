@@ -15,6 +15,7 @@ import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthorisedMandatoryVrnRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.*
+import uk.gov.hmrc.iossintermediaryregistration.models.amend.AmendResult.AmendSucceeded
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStatus
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
@@ -40,6 +41,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   private lazy val createRegistrationRoute: String = routes.RegistrationController.createRegistration().url
   private lazy val getRegistrationRoute: String = routes.RegistrationController.displayRegistration(intermediaryNumber).url
+  private lazy val amendRegistrationRoute: String = routes.RegistrationController.amend().url
 
   override def beforeEach(): Unit = {
     reset(mockRegistrationService)
@@ -259,6 +261,48 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         status(result) `mustBe` INTERNAL_SERVER_ERROR
         verify(mockRegistrationService, times(1)).getRegistrationWrapper(eqTo(intermediaryNumber), eqTo(vrn))(any())
       }
+    }
+  }
+
+  "amend" - {
+
+    "must return 201 when given a valid payload and the registration is created successfully" in {
+
+      val mockService = mock[RegistrationService]
+      when(mockService.amendRegistration(any())) thenReturn Future.successful(AmendSucceeded)
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(RegistrationData.etmpAmendRegistrationRequest))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual OK
+      }
+
+    }
+
+    "must return 400 when the JSON request payload is not a registration" in {
+
+      val app = applicationBuilder.build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(RegistrationData.invalidRegistration))
+
+        val result = route(app, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+
     }
   }
 }

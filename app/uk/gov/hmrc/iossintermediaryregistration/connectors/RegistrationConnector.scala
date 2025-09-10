@@ -22,9 +22,11 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
 import uk.gov.hmrc.iossintermediaryregistration.config.{CreateRegistrationConfig, EtmpDisplayRegistrationConfig}
+import uk.gov.hmrc.iossintermediaryregistration.config.{AmendRegistrationConfig, CreateRegistrationConfig}
 import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationHttpParser.*
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationRequest
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.{AmendRegistrationResponse, EtmpAmendRegistrationRequest}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.UnexpectedResponseStatus
 
 import java.util.UUID
@@ -34,12 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 case class RegistrationConnector @Inject()(
                                             httpClientV2: HttpClientV2,
                                             createRegistrationConfig: CreateRegistrationConfig,
-                                            etmpDisplayRegistrationConfig: EtmpDisplayRegistrationConfig
+                                            etmpDisplayRegistrationConfig: EtmpDisplayRegistrationConfig,
+                                            amendRegistrationConfig: AmendRegistrationConfig,
                                           )(implicit ec: ExecutionContext) extends Logging {
 
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private def createHeaders(correlationId: String): Seq[(String, String)] = createRegistrationConfig.eisEtmpCreateHeaders(correlationId)
+  private def amendHeaders(correlationId: String): Seq[(String, String)] = amendRegistrationConfig.eisEtmpAmendHeaders(correlationId)
 
   private def getHeaders(correlationId: String): Seq[(String, String)] = etmpDisplayRegistrationConfig.eisEtmpGetHeaders(correlationId)
 
@@ -76,4 +80,24 @@ case class RegistrationConnector @Inject()(
           Left(UnexpectedResponseStatus(e.responseCode, s"Unexpected response from ETMP Display Registration with status ${e.responseCode}"))
       }
   }
+  def amendRegistration(registration: EtmpAmendRegistrationRequest): Future[AmendEtmpRegistrationResponse] = {
+
+    val correlationId = UUID.randomUUID.toString
+    val headersWithCorrelationId = amendHeaders(correlationId)
+    val headersWithoutAuth = headersWithCorrelationId.filterNot {
+      case (key, _) => key.matches(AUTHORIZATION)
+    }
+
+    logger.info(s"Sending create request to etmp with headers $headersWithoutAuth")
+
+    httpClientV2.put(url"${amendRegistrationConfig.baseUrl}vec/iossregistration/amendregistration/v1")
+      .withBody(Json.toJson(registration))
+      .setHeader(headersWithCorrelationId: _*)
+      .execute[AmendEtmpRegistrationResponse].recover {
+        case e: HttpException =>
+          logger.error(s"Unexpected response from etmp registration ${e.getMessage}", e)
+          Left(UnexpectedResponseStatus(e.responseCode, s"Unexpected response from $serviceName, received status ${e.responseCode}"))
+      }
+  }
+
 }
