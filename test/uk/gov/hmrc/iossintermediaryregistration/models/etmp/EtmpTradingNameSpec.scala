@@ -7,7 +7,7 @@ class EtmpTradingNameSpec extends BaseSpec {
 
   private val etmpTradingName: EtmpTradingName = arbitraryEtmpTradingName.arbitrary.sample.value
 
-  "EtmpTradingNameSpec" - {
+  "EtmpTradingName" - {
 
     "must deserialise/serialise from and to EtmpTradingName" in {
 

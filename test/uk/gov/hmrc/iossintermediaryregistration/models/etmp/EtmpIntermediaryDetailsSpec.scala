@@ -8,7 +8,7 @@ class EtmpIntermediaryDetailsSpec extends BaseSpec {
 
   private val etmpOtherIossIntermediaryRegistrationsList: Seq[EtmpOtherIossIntermediaryRegistrations] = Gen.listOfN(3, arbitraryOtherIossIntermediaryRegistrations.arbitrary).sample.value
 
-  "EtmpIntermediaryDetailsSpec" - {
+  "EtmpIntermediaryDetails" - {
 
     "must deserialise/serialise from and to EtmpBankDetails" in {
 

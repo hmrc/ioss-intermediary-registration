@@ -8,7 +8,7 @@ class EtmpPreviousEuRegistrationDetailsSpec extends BaseSpec {
   private val etmpEuPreviousRegistrationDetails: EtmpPreviousEuRegistrationDetails =
     arbitraryEtmpPreviousEuRegistrationDetails.arbitrary.sample.value
 
-  "EtmpPreviousEuRegistrationDetailsSpec" - {
+  "EtmpPreviousEuRegistrationDetails" - {
 
     "must deserialise/serialise from and to EtmpPreviousEuRegistrationDetails" - {
 

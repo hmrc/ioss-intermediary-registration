@@ -7,7 +7,7 @@ class EtmpClientDetailsSpec extends BaseSpec {
 
   private val etmpClientDetails: EtmpClientDetails = arbitraryEtmpClientDetails.arbitrary.sample.value
 
-  "EtmpClientDetailsSpec" - {
+  "EtmpClientDetails" - {
 
     "must deserialise/serialise from and to EtmpClientDetails" in {
 

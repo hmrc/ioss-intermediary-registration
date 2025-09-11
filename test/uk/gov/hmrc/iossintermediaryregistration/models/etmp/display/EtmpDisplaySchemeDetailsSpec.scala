@@ -8,7 +8,7 @@ class EtmpDisplaySchemeDetailsSpec extends BaseSpec {
 
   private val etmpDisplaySchemeDetails: EtmpDisplaySchemeDetails = arbitraryEtmpDisplaySchemeDetails.arbitrary.sample.value
 
-  "EtmpDisplaySchemeDetailsSpec" - {
+  "EtmpDisplaySchemeDetails" - {
 
     "must deserialise/serialise from and to EtmpDisplaySchemeDetails" - {
 

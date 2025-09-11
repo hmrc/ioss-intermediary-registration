@@ -7,7 +7,7 @@ class EtmpBankDetailsSpec extends BaseSpec {
 
   private val etmpBankDetails: EtmpBankDetails = arbitraryEtmpBankDetails.arbitrary.sample.value
 
-  "EtmpBankDetailsSpec" - {
+  "EtmpBankDetails" - {
 
     "must deserialise/serialise from and to EtmpBankDetails" - {
 

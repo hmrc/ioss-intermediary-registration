@@ -118,7 +118,7 @@ case class RegistrationController @Inject()(
     }
   }
 
-  def getRegistration(intermediaryNumber: String): Action[AnyContent] = cc.authAndRequireVat().async {
+  def displayRegistration(intermediaryNumber: String): Action[AnyContent] = cc.authAndRequireVat().async {
     implicit request =>
       registrationService.getRegistrationWrapper(intermediaryNumber, request.vrn).map { registrationWrapper =>
         Ok(Json.toJson(registrationWrapper))

@@ -4,7 +4,7 @@ GET         /vat-information                                  uk.gov.hmrc.iossin
 
 POST        /create-registration                              uk.gov.hmrc.iossintermediaryregistration.controllers.RegistrationController.createRegistration()
 
-GET         /get-registration/:intermediaryNumber             uk.gov.hmrc.iossintermediaryregistration.controllers.RegistrationController.getRegistration(intermediaryNumber: String)
+GET         /get-registration/:intermediaryNumber             uk.gov.hmrc.iossintermediaryregistration.controllers.RegistrationController.displayRegistration(intermediaryNumber: String)
 
 POST        /validate-core-registration                       uk.gov.hmrc.iossintermediaryregistration.controllers.ValidateCoreRegistrationController.post()
 

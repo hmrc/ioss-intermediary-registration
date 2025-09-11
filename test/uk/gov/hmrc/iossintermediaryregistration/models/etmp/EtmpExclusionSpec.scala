@@ -7,7 +7,7 @@ class EtmpExclusionSpec extends BaseSpec {
 
   private val etmpExclusion: EtmpExclusion = arbitraryEtmpExclusion.arbitrary.sample.value
 
-  "EtmpExclusionSpec" - {
+  "EtmpExclusion" - {
 
     "must deserialise/serialise from and to EtmpExclusion" in {
 

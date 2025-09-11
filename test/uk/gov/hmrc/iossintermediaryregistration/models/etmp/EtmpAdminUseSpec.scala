@@ -7,7 +7,7 @@ class EtmpAdminUseSpec extends BaseSpec {
 
   private val etmpAdminUse: EtmpAdminUse = arbitraryEtmpAdminUse.arbitrary.sample.value
 
-  "EtmpAdminUseSpec" - {
+  "EtmpAdminUse" - {
 
     "must deserialise/serialise from and to EtmpAdminUse" - {
 

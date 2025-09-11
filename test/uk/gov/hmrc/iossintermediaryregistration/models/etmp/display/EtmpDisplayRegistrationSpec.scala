@@ -8,7 +8,7 @@ class EtmpDisplayRegistrationSpec extends BaseSpec {
 
   private val etmpDisplayRegistration: EtmpDisplayRegistration = arbitraryEtmpDisplayRegistration.arbitrary.sample.value
 
-  "EtmpDisplayRegistrationSpec" - {
+  "EtmpDisplayRegistration" - {
 
     "must serialise to EtmpDisplayRegistration" in {
 

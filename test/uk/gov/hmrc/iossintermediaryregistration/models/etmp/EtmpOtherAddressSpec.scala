@@ -7,7 +7,7 @@ class EtmpOtherAddressSpec extends BaseSpec {
 
   private val etmpOtherAddress: EtmpOtherAddress = arbitraryEtmpOtherAddress.arbitrary.sample.value
 
-  "EtmpOtherAddressSpec" - {
+  "EtmpOtherAddress" - {
 
     "must deserialise/serialise from and to EtmpOtherAddress" - {
 

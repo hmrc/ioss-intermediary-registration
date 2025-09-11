@@ -39,7 +39,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
   private val mockAuditService: AuditService = mock[AuditService]
 
   private lazy val createRegistrationRoute: String = routes.RegistrationController.createRegistration().url
-  private lazy val getRegistrationRoute: String = routes.RegistrationController.getRegistration(intermediaryNumber).url
+  private lazy val getRegistrationRoute: String = routes.RegistrationController.displayRegistration(intermediaryNumber).url
 
   override def beforeEach(): Unit = {
     reset(mockRegistrationService)
@@ -216,7 +216,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
     }
   }
 
-  "getRegistration" - {
+  "displayRegistration" - {
 
     val registrationWrapper: RegistrationWrapper = arbitraryRegistrationWrapper.arbitrary.sample.value
 

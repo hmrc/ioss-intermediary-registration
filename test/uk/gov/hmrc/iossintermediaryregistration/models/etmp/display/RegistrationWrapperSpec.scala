@@ -15,7 +15,7 @@ class RegistrationWrapperSpec extends BaseSpec {
     etmpDisplayRegistration = etmpDisplayRegistration
   )
 
-  "RegistrationWrapperSpec" - {
+  "RegistrationWrapper" - {
 
     "must deserialise from RegistrationWrapper" in {
 
