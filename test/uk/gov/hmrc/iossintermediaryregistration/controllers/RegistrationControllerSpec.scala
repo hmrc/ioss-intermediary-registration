@@ -59,7 +59,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
           processingDateTime = LocalDateTime.now(stubClock),
           formBundleNumber = fbNumber,
           vrn = vrn.vrn,
-          intermediary = "test",
+          intRef = "test",
           businessPartner = "test businessPartner"
         )
 
@@ -110,7 +110,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
           processingDateTime = LocalDateTime.now(stubClock),
           formBundleNumber = fbNumber,
           vrn = vrn.vrn,
-          intermediary = "test",
+          intRef = "test",
           businessPartner = "test businessPartner"
         )
 
