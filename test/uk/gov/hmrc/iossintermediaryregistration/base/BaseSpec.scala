@@ -160,6 +160,7 @@ trait BaseSpec
       reRegistration = false,
       otherAddress = true
     ),
+    exclusionDetails = None,
     customerIdentification = EtmpAmendCustomerIdentification(iossNumber),
     tradingNames = registrationRequest.tradingNames,
     intermediaryDetails = registrationRequest.intermediaryDetails,
