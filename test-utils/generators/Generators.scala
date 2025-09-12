@@ -410,7 +410,6 @@ trait Generators {
       for {
         commencementDate <- arbitrary[LocalDate].map(_.toString)
         euRegistrationDetails <- Gen.listOfN(3, arbitraryEtmpDisplayEuRegistrationDetails.arbitrary)
-        previousEURegistrationDetails <- Gen.listOfN(3, arbitraryEtmpPreviousEuRegistrationDetails.arbitrary)
         contactName <- Gen.alphaStr
         businessTelephoneNumber <- Gen.alphaNumStr
         businessEmailId <- Gen.alphaStr
@@ -420,7 +419,6 @@ trait Generators {
         EtmpDisplaySchemeDetails(
           commencementDate = commencementDate,
           euRegistrationDetails = euRegistrationDetails,
-          previousEURegistrationDetails = previousEURegistrationDetails,
           contactName = contactName,
           businessTelephoneNumber = businessTelephoneNumber,
           businessEmailId = businessEmailId,

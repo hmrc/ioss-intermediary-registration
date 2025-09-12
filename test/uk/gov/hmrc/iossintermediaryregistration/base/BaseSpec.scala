@@ -79,7 +79,6 @@ trait BaseSpec
     (
       (__ \ "commencementDate").write[String] and
         (__ \ "euRegistrationDetails").write[Seq[EtmpDisplayEuRegistrationDetails]] and
-        (__ \ "previousEURegistrationDetails").write[Seq[EtmpPreviousEuRegistrationDetails]] and
         (__ \ "contactDetails" \ "contactNameOrBusinessAddress").write[String] and
         (__ \ "contactDetails" \ "businessTelephoneNumber").write[String] and
         (__ \ "contactDetails" \ "businessEmailAddress").write[String] and

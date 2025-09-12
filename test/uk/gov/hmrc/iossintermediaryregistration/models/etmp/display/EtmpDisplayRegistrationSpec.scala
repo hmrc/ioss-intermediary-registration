@@ -21,7 +21,6 @@ class EtmpDisplayRegistrationSpec extends BaseSpec {
         "schemeDetails" -> Json.obj(
           "commencementDate" -> etmpDisplayRegistration.schemeDetails.commencementDate,
           "euRegistrationDetails" -> etmpDisplayRegistration.schemeDetails.euRegistrationDetails,
-          "previousEURegistrationDetails" -> etmpDisplayRegistration.schemeDetails.previousEURegistrationDetails,
           "contactDetails" -> Json.obj(
             "contactNameOrBusinessAddress" -> etmpDisplayRegistration.schemeDetails.contactName,
             "businessTelephoneNumber" -> etmpDisplayRegistration.schemeDetails.businessTelephoneNumber,

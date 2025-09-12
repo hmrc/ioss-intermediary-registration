@@ -17,7 +17,6 @@ class EtmpDisplaySchemeDetailsSpec extends BaseSpec {
         val json = Json.obj(
           "commencementDate" -> etmpDisplaySchemeDetails.commencementDate,
           "euRegistrationDetails" -> etmpDisplaySchemeDetails.euRegistrationDetails,
-          "previousEURegistrationDetails" -> etmpDisplaySchemeDetails.previousEURegistrationDetails,
           "contactName" -> etmpDisplaySchemeDetails.contactName,
           "businessTelephoneNumber" -> etmpDisplaySchemeDetails.businessTelephoneNumber,
           "businessEmailId" -> etmpDisplaySchemeDetails.businessEmailId,
@@ -29,7 +28,6 @@ class EtmpDisplaySchemeDetailsSpec extends BaseSpec {
         val expectedResult = EtmpDisplaySchemeDetails(
           commencementDate = etmpDisplaySchemeDetails.commencementDate,
           euRegistrationDetails = etmpDisplaySchemeDetails.euRegistrationDetails,
-          previousEURegistrationDetails = etmpDisplaySchemeDetails.previousEURegistrationDetails,
           contactName = etmpDisplaySchemeDetails.contactName,
           businessTelephoneNumber = etmpDisplaySchemeDetails.businessTelephoneNumber,
           businessEmailId = etmpDisplaySchemeDetails.businessEmailId,
@@ -47,7 +45,6 @@ class EtmpDisplaySchemeDetailsSpec extends BaseSpec {
         val json = Json.obj(
           "commencementDate" -> etmpDisplaySchemeDetails.commencementDate,
           "euRegistrationDetails" -> etmpDisplaySchemeDetails.euRegistrationDetails,
-          "previousEURegistrationDetails" -> etmpDisplaySchemeDetails.previousEURegistrationDetails,
           "contactName" -> etmpDisplaySchemeDetails.contactName,
           "businessTelephoneNumber" -> etmpDisplaySchemeDetails.businessTelephoneNumber,
           "businessEmailId" -> etmpDisplaySchemeDetails.businessEmailId,
@@ -57,7 +54,6 @@ class EtmpDisplaySchemeDetailsSpec extends BaseSpec {
         val expectedResult = EtmpDisplaySchemeDetails(
           commencementDate = etmpDisplaySchemeDetails.commencementDate,
           euRegistrationDetails = etmpDisplaySchemeDetails.euRegistrationDetails,
-          previousEURegistrationDetails = etmpDisplaySchemeDetails.previousEURegistrationDetails,
           contactName = etmpDisplaySchemeDetails.contactName,
           businessTelephoneNumber = etmpDisplaySchemeDetails.businessTelephoneNumber,
           businessEmailId = etmpDisplaySchemeDetails.businessEmailId,
