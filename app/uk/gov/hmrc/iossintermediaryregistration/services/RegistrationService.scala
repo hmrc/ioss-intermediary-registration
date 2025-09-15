@@ -76,7 +76,7 @@ class RegistrationService @Inject()(
   def amendRegistration(etmpRegistrationRequest: EtmpAmendRegistrationRequest): Future[AmendResult] = {
     registrationConnector.amendRegistration(etmpRegistrationRequest).flatMap {
       case Right(amendRegistrationResponse: AmendRegistrationResponse) =>
-        logger.info(s"Successfully sent amend registration to ETMP at ${amendRegistrationResponse.processingDateTime} for vrn ${amendRegistrationResponse.vrn} and IOSS number ${amendRegistrationResponse.iossReference}")
+        logger.info(s"Successfully sent amend registration to ETMP at ${amendRegistrationResponse.processingDateTime} for vrn ${amendRegistrationResponse.vrn} and Intermediary number ${amendRegistrationResponse.intermediary}")
         Future.successful(AmendSucceeded)
 
       case Left(error) =>

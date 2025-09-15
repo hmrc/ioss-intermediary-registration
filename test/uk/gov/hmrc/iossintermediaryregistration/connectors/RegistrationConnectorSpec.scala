@@ -55,7 +55,7 @@ class RegistrationConnectorSpec extends BaseSpec with WireMockHelper {
       processingDateTime = LocalDateTime.now(),
       formBundleNumber = "12345",
       vrn = "123456789",
-      iossReference = "IM900100000001",
+      intermediary = "IN900100000001",
       businessPartner = "A business partner"
     )
 
