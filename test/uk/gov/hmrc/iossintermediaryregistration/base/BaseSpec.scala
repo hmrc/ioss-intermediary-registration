@@ -93,8 +93,8 @@ trait BaseSpec
       (__ \ "customerIdentification").write[EtmpCustomerIdentification] and
         (__ \ "tradingNames").write[Seq[EtmpTradingName]] and
         (__ \ "clientDetails").write[Seq[EtmpClientDetails]] and
-        (__ \ "intermediaryDetails").write[EtmpIntermediaryDetails] and
-        (__ \ "otherAddress").write[EtmpOtherAddress] and
+        (__ \ "intermediaryDetails").writeNullable[EtmpIntermediaryDetails] and
+        (__ \ "otherAddress").writeNullable[EtmpOtherAddress] and
         (__ \ "schemeDetails").write[EtmpDisplaySchemeDetails](etmpDisplaySchemeDetailsWrites) and
         (__ \ "exclusions").write[Seq[EtmpExclusion]] and
         (__ \ "bankDetails").write[EtmpBankDetails] and

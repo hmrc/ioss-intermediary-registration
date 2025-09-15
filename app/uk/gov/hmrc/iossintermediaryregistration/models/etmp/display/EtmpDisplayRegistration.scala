@@ -25,8 +25,8 @@ case class EtmpDisplayRegistration(
                                     customerIdentification: EtmpCustomerIdentification,
                                     tradingNames: Seq[EtmpTradingName],
                                     clientDetails: Seq[EtmpClientDetails],
-                                    intermediaryDetails: EtmpIntermediaryDetails,
-                                    otherAddress: EtmpOtherAddress,
+                                    intermediaryDetails: Option[EtmpIntermediaryDetails],
+                                    otherAddress: Option[EtmpOtherAddress],
                                     schemeDetails: EtmpDisplaySchemeDetails,
                                     exclusions: Seq[EtmpExclusion],
                                     bankDetails: EtmpBankDetails,
@@ -42,8 +42,8 @@ object EtmpDisplayRegistration {
       (__ \ "customerIdentification").read[EtmpCustomerIdentification] and
         (__ \ "tradingNames").readNullable[Seq[EtmpTradingName]].map(_.getOrElse(List.empty)) and
         (__ \ "clientDetails").readNullable[Seq[EtmpClientDetails]].map(_.getOrElse(List.empty)) and
-        (__ \ "intermediaryDetails").read[EtmpIntermediaryDetails] and
-        (__ \ "otherAddress").read[EtmpOtherAddress] and
+        (__ \ "intermediaryDetails").readNullable[EtmpIntermediaryDetails] and
+        (__ \ "otherAddress").readNullable[EtmpOtherAddress] and
         (__ \ "schemeDetails").read[EtmpDisplaySchemeDetails] and
         (__ \ "exclusions").readNullable[Seq[EtmpExclusion]].map(_.getOrElse(List.empty)) and
         (__ \ "bankDetails").read[EtmpBankDetails] and

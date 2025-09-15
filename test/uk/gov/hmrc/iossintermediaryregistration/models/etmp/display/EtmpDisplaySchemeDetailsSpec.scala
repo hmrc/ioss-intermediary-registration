@@ -2,7 +2,6 @@ package uk.gov.hmrc.iossintermediaryregistration.models.etmp.display
 
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
-import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpPreviousEuRegistrationDetails
 
 class EtmpDisplaySchemeDetailsSpec extends BaseSpec {
 
