@@ -24,6 +24,7 @@ import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthenticatedControllerComponents, AuthorisedMandatoryVrnRequest}
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.RegistrationStatus
+import uk.gov.hmrc.iossintermediaryregistration.models.amend.AmendResult.{AmendFailed, AmendSucceeded}
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.EtmpAmendRegistrationRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.{EtmpRegistrationRequest, EtmpRegistrationStatus}

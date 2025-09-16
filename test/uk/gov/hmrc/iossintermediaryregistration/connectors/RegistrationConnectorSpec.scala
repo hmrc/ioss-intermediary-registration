@@ -36,8 +36,7 @@ class RegistrationConnectorSpec extends BaseSpec with WireMockHelper {
         "microservice.services.display-registration.host" -> "127.0.0.1",
         "microservice.services.display-registration.port" -> server.port,
         "microservice.services.display-registration.authorizationToken" -> "auth-token",
-        "microservice.services.display-registration.environment" -> "test-environment"
-        "microservice.services.create-registration.environment" -> "test-environment",
+        "microservice.services.display-registration.environment" -> "test-environment",
         "microservice.services.amend-registration.host" -> "127.0.0.1",
         "microservice.services.amend-registration.port" -> server.port,
         "microservice.services.amend-registration.authorizationToken" -> "auth-token"
