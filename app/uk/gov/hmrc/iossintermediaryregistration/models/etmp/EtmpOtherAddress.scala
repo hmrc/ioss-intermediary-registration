@@ -30,5 +30,6 @@ case class EtmpOtherAddress(
 
 
 object EtmpOtherAddress {
+
   implicit val format: OFormat[EtmpOtherAddress] = Json.format[EtmpOtherAddress]
 }

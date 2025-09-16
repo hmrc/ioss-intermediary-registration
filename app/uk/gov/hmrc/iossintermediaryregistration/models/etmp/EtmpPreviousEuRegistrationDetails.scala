@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 import play.api.libs.json.{Json, OFormat}
 
 case class EtmpPreviousEuRegistrationDetails(
-                                            issuedBy: String,
-                                            registrationNumber: String,
-                                            schemeType: SchemeType,
-                                            intermediaryNumber: Option[String] = None
-                                          )
+                                              issuedBy: String,
+                                              registrationNumber: String,
+                                              schemeType: SchemeType,
+                                              intermediaryNumber: Option[String] = None
+                                            )
 
 object EtmpPreviousEuRegistrationDetails {
 

@@ -24,11 +24,15 @@ import org.scalatest.{OptionValues, TryValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.{Writes, __}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthAction, FakeAuthAction}
 import uk.gov.hmrc.iossintermediaryregistration.models.DesAddress
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayEuRegistrationDetails, EtmpDisplayRegistration, EtmpDisplaySchemeDetails}
 
 import java.time.format.DateTimeFormatter
 import java.time.{Clock, LocalDate, ZoneId}
@@ -69,6 +73,34 @@ trait BaseSpec
     .withLocale(Locale.UK)
     .withZone(ZoneId.of("GMT"))
 
+  val intermediaryNumber: String = genIntermediaryNumber.sample.value
+
+  private val etmpDisplaySchemeDetailsWrites: Writes[EtmpDisplaySchemeDetails] = {
+    (
+      (__ \ "commencementDate").write[String] and
+        (__ \ "euRegistrationDetails").write[Seq[EtmpDisplayEuRegistrationDetails]] and
+        (__ \ "contactDetails" \ "contactNameOrBusinessAddress").write[String] and
+        (__ \ "contactDetails" \ "businessTelephoneNumber").write[String] and
+        (__ \ "contactDetails" \ "businessEmailAddress").write[String] and
+        (__ \ "contactDetails" \ "unusableStatus").write[Boolean] and
+        (__ \ "nonCompliantReturns").writeNullable[String] and
+        (__ \ "nonCompliantPayments").writeNullable[String]
+      )(etmpDisplaySchemeDetails => Tuple.fromProductTyped(etmpDisplaySchemeDetails))
+  }
+
+  val etmpDisplayRegistrationWrites: Writes[EtmpDisplayRegistration] = {
+    (
+      (__ \ "customerIdentification").write[EtmpCustomerIdentification] and
+        (__ \ "tradingNames").write[Seq[EtmpTradingName]] and
+        (__ \ "clientDetails").write[Seq[EtmpClientDetails]] and
+        (__ \ "intermediaryDetails").writeNullable[EtmpIntermediaryDetails] and
+        (__ \ "otherAddress").writeNullable[EtmpOtherAddress] and
+        (__ \ "schemeDetails").write[EtmpDisplaySchemeDetails](etmpDisplaySchemeDetailsWrites) and
+        (__ \ "exclusions").write[Seq[EtmpExclusion]] and
+        (__ \ "bankDetails").write[EtmpBankDetails] and
+        (__ \ "adminUse").write[EtmpAdminUse]
+      )(etmpDisplayRegistration => Tuple.fromProductTyped(etmpDisplayRegistration))
+  }
 }
 
 

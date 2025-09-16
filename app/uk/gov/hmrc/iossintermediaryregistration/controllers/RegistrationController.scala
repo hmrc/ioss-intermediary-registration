@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package uk.gov.hmrc.iossintermediaryregistration.controllers
 
 import play.api.libs.json.Json
-import play.api.mvc.{Action, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.iossintermediaryregistration.config.AppConfig
 import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
@@ -25,8 +25,8 @@ import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{Authenticat
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.RegistrationStatus
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
-import uk.gov.hmrc.iossintermediaryregistration.models.etmp.{EtmpRegistrationRequest, EtmpRegistrationStatus}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrolmentErrorResponse, EtmpEnrolmentResponse}
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.{EtmpRegistrationRequest, EtmpRegistrationStatus}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException}
 import uk.gov.hmrc.iossintermediaryregistration.repositories.RegistrationStatusRepository
 import uk.gov.hmrc.iossintermediaryregistration.services.{AuditService, RegistrationService, RetryService}
@@ -118,4 +118,14 @@ case class RegistrationController @Inject()(
     }
   }
 
+  def displayRegistration(intermediaryNumber: String): Action[AnyContent] = cc.authAndRequireVat().async {
+    implicit request =>
+      registrationService.getRegistrationWrapper(intermediaryNumber, request.vrn).map { registrationWrapper =>
+        Ok(Json.toJson(registrationWrapper))
+      }.recover {
+        case exception =>
+          logger.error(exception.getMessage, exception)
+          InternalServerError(exception.getMessage)
+      }
+  }
 }
