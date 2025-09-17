@@ -266,7 +266,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   "amend" - {
 
-    "must return 201 when given a valid payload and the registration is created successfully" in {
+    "must return 200 when given a valid payload and the registration is created successfully" in {
 
       val mockService = mock[RegistrationService]
       when(mockService.amendRegistration(any())) thenReturn Future.successful(AmendSucceeded)
