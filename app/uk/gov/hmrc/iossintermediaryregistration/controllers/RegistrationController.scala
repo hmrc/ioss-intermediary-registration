@@ -24,10 +24,8 @@ import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthenticatedControllerComponents, AuthorisedMandatoryVrnRequest}
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.RegistrationStatus
-import uk.gov.hmrc.iossintermediaryregistration.models.amend.AmendResult.{AmendFailed, AmendSucceeded}
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.EtmpAmendRegistrationRequest
-import uk.gov.hmrc.iossintermediaryregistration.models.etmp.{EtmpRegistrationRequest, EtmpRegistrationStatus}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.{EtmpEnrolmentErrorResponse, EtmpEnrolmentResponse}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.{EtmpRegistrationRequest, EtmpRegistrationStatus}
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException}
@@ -135,13 +133,14 @@ case class RegistrationController @Inject()(
   def amend(): Action[EtmpAmendRegistrationRequest] = cc.authAndRequireVat()(parse.json[EtmpAmendRegistrationRequest]).async {
     implicit request =>
       val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = request.body
-      registrationService
-        .amendRegistration(etmpAmendRegistrationRequest)
-        .map {
-          case AmendSucceeded => Ok
-          case AmendFailed =>
-            logger.error(s"Internal server error $etmpAmendRegistrationRequest")
-            InternalServerError(Json.toJson(s"Internal server error $etmpAmendRegistrationRequest"))
-        }
+      registrationService.amendRegistration(etmpAmendRegistrationRequest).map {
+        case Right(amendRegistrationResponse) =>
+          Ok(Json.toJson(amendRegistrationResponse))
+
+        case Left(error) =>
+          val errorMessage: String = s"Internal server error with error: $error and message: ${error.getMessage}."
+          logger.error(errorMessage)
+          InternalServerError(errorMessage)
+      }
   }
 }

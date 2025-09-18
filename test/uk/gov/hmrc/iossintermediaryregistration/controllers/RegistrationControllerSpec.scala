@@ -15,9 +15,9 @@ import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthorisedMandatoryVrnRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.*
-import uk.gov.hmrc.iossintermediaryregistration.models.amend.AmendResult.AmendSucceeded
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStatus
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.{AmendRegistrationResponse, EtmpAmendRegistrationRequest}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, ServiceUnavailable}
@@ -266,29 +266,57 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   "amend" - {
 
-    "must return 200 when given a valid payload and the registration is created successfully" in {
+    val amendRegistrationResponse: AmendRegistrationResponse = arbitraryAmendRegistrationResponse.arbitrary.sample.value
 
-      val mockService = mock[RegistrationService]
-      when(mockService.amendRegistration(any())) thenReturn Future.successful(AmendSucceeded)
+    "must return Right OK with a JSON payload response when given a valid payload and the registration is created successfully" in {
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+      val responseJson = Json.toJson(amendRegistrationResponse)
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
 
       val app = applicationBuilder
-        .overrides(bind[RegistrationService].toInstance(mockService))
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
         .build()
 
       running(app) {
 
         val request =
           FakeRequest(POST, amendRegistrationRoute)
-            .withJsonBody(Json.toJson(RegistrationData.etmpAmendRegistrationRequest))
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest))
 
         val result = route(app, request).value
 
-        status(result) mustEqual OK
+        status(result) `mustBe` OK
+        contentAsJson(result) `mustBe` responseJson
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
       }
-
     }
 
-    "must return 400 when the JSON request payload is not a registration" in {
+    "must return Left Internal Server Error when given a valid payload and the registration is created successfully" in {
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Left(Exception("ERROR")).toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` INTERNAL_SERVER_ERROR
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+      }
+    }
+
+    "must return Bas Request when the JSON request payload is not a registration" in {
 
       val app = applicationBuilder.build()
 
@@ -300,9 +328,8 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         val result = route(app, request).value
 
-        status(result) mustEqual BAD_REQUEST
+        status(result) `mustBe` BAD_REQUEST
       }
-
     }
   }
 }

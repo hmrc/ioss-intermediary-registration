@@ -9,9 +9,8 @@ import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.connectors.{GetVatInfoConnector, RegistrationConnector}
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
-import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayRegistration, RegistrationWrapper}
-import uk.gov.hmrc.iossintermediaryregistration.models.amend.AmendResult.AmendSucceeded
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.AmendRegistrationResponse
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayRegistration, RegistrationWrapper}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpException, NotFound, ServerError}
 import uk.gov.hmrc.iossintermediaryregistration.testutils.RegistrationData.etmpRegistrationRequest
@@ -137,29 +136,50 @@ class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
         verify(mockRegistrationConnector, times(1)).getRegistration(eqTo(intermediaryNumber))
       }
     }
-  }
 
-  ".amendRegistration" - {
+    ".amendRegistration" - {
 
-    "must create registration request and return a successful ETMP enrolment response" in {
+      val amendRegistrationResponse: AmendRegistrationResponse = arbitraryAmendRegistrationResponse.arbitrary.sample.value
 
-      val amendRegistrationResponse = AmendRegistrationResponse(
-        processingDateTime = LocalDateTime.now(stubClock),
-        formBundleNumber = "123456789",
-        vrn = vrn.vrn,
-        intermediary = "test",
-        businessPartner = "test businessPartner"
-      )
+      "must return Right Amend Registration Response when the amend registration is successful" in {
 
-      when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest)) thenReturn Right(amendRegistrationResponse).toFuture
+        when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest)) thenReturn Right(amendRegistrationResponse).toFuture
 
-      val app = applicationBuilder
-        .build()
+        val app = applicationBuilder
+          .build()
 
-      running(app) {
+        running(app) {
 
-        registrationService.amendRegistration(etmpAmendRegistrationRequest).futureValue mustBe AmendSucceeded
-        verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+          val result = registrationService.amendRegistration(etmpAmendRegistrationRequest).futureValue
+
+          result `mustBe` Right(amendRegistrationResponse)
+          verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+        }
+      }
+
+      Seq(NotFound, ServerError).foreach { error =>
+
+        s"must throw an Exception when the server returns error: $error" in {
+
+          val errorMessage: String = s"There was an error amending Registration from ETMP: ${error.getClass} ${error.body}"
+
+          when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest)) thenReturn Left(error).toFuture
+
+          val app = applicationBuilder
+            .build()
+
+          running(app) {
+
+            val result = registrationService.amendRegistration(etmpAmendRegistrationRequest).failed
+
+            whenReady(result) { exp =>
+              exp `mustBe` a[EtmpException]
+              exp.getMessage `mustBe` errorMessage
+            }
+
+            verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+          }
+        }
       }
     }
   }

@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.iossintermediaryregistration.models.etmp
 
-import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 
 class EtmpAdministrationSpec extends BaseSpec with ScalaCheckPropertyChecks {
 
-  private val etmpAdministration = arbitrary[EtmpAdministration].sample.value
+  private val etmpAdministration: EtmpAdministration = arbitraryEtmpAdministration.arbitrary.sample.value
 
   "EtmpAdministration" - {
 
@@ -46,8 +45,6 @@ class EtmpAdministrationSpec extends BaseSpec with ScalaCheckPropertyChecks {
     }
 
     "must handle invalid data during deserialization" in {
-
-      val etmpAdministration = arbitrary[EtmpAdministration].sample.value
 
       val expectedJson = Json.obj(
         "messageType" -> 12345,

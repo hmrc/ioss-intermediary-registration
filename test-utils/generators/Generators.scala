@@ -7,6 +7,7 @@ import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.AmendRegistrationResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayEuRegistrationDetails, EtmpDisplayRegistration, EtmpDisplaySchemeDetails, RegistrationWrapper}
 import uk.gov.hmrc.iossintermediaryregistration.models.requests.SaveForLaterRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.SaveForLaterResponse
@@ -568,6 +569,26 @@ trait Generators {
           otherAddress = Some(otherAddress),
           schemeDetails = schemeDetails,
           bankDetails = bankDetails
+        )
+      }
+    }
+  }
+  
+  implicit lazy val arbitraryAmendRegistrationResponse: Arbitrary[AmendRegistrationResponse] = {
+    Arbitrary {
+      for {
+        processingDateTime <- arbitrary[LocalDateTime]
+        formBundleNumber <- genIntermediaryNumber
+        vrn <- arbitraryVrn.arbitrary.map(_.vrn)
+        intermediary <- genIntermediaryNumber
+        businessPartner <- arbitrary[String]
+      } yield {
+        AmendRegistrationResponse(
+          processingDateTime = processingDateTime,
+          formBundleNumber = formBundleNumber,
+          vrn = vrn,
+          intermediary = intermediary,
+          businessPartner = businessPartner
         )
       }
     }
