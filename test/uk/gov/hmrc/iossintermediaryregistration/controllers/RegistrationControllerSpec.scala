@@ -17,6 +17,7 @@ import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthorisedMa
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStatus
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.{AmendRegistrationResponse, EtmpAmendRegistrationRequest}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, ServiceUnavailable}
@@ -40,6 +41,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   private lazy val createRegistrationRoute: String = routes.RegistrationController.createRegistration().url
   private lazy val getRegistrationRoute: String = routes.RegistrationController.displayRegistration(intermediaryNumber).url
+  private lazy val amendRegistrationRoute: String = routes.RegistrationController.amend().url
 
   override def beforeEach(): Unit = {
     reset(mockRegistrationService)
@@ -258,6 +260,75 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         status(result) `mustBe` INTERNAL_SERVER_ERROR
         verify(mockRegistrationService, times(1)).getRegistrationWrapper(eqTo(intermediaryNumber), eqTo(vrn))(any())
+      }
+    }
+  }
+
+  "amend" - {
+
+    val amendRegistrationResponse: AmendRegistrationResponse = arbitraryAmendRegistrationResponse.arbitrary.sample.value
+
+    "must return Right OK with a JSON payload response when given a valid payload and the registration is created successfully" in {
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+      val responseJson = Json.toJson(amendRegistrationResponse)
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` OK
+        contentAsJson(result) `mustBe` responseJson
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+      }
+    }
+
+    "must return Left Internal Server Error when given a valid payload and the registration is created successfully" in {
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Left(Exception("ERROR")).toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` INTERNAL_SERVER_ERROR
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+      }
+    }
+
+    "must return Bad Request when the JSON request payload is not a registration" in {
+
+      val app = applicationBuilder.build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(RegistrationData.invalidRegistration))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` BAD_REQUEST
       }
     }
   }

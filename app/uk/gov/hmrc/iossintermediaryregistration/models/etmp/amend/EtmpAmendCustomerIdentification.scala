@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.models.etmp
+package uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend
 
-import uk.gov.hmrc.iossintermediaryregistration.models.{Enumerable, WithName}
+import play.api.libs.json.{Json, OFormat}
 
-sealed trait EtmpMessageType
+case class EtmpAmendCustomerIdentification(iossNumber: String)
 
-object EtmpMessageType extends Enumerable.Implicits {
+object EtmpAmendCustomerIdentification {
 
-  case object IOSSIntCreate extends WithName("IOSSIntCreate") with EtmpMessageType
-  case object IOSSIntAmend extends WithName("IOSSIntAmend") with EtmpMessageType
-
-  val values: Seq[EtmpMessageType] = Seq(
-    IOSSIntCreate, IOSSIntAmend
-  )
-
-  implicit val enumerable: Enumerable[EtmpMessageType] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+  implicit val format: OFormat[EtmpAmendCustomerIdentification] = Json.format[EtmpAmendCustomerIdentification]
 }
