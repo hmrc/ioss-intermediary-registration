@@ -316,7 +316,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
-    "must return Bas Request when the JSON request payload is not a registration" in {
+    "must return Bad Request when the JSON request payload is not a registration" in {
 
       val app = applicationBuilder.build()
 
