@@ -145,13 +145,6 @@ trait Generators {
       Gen.oneOf(SchemeType.values)
     }
 
-  implicit lazy val arbitraryWebsite: Arbitrary[EtmpWebsite] =
-    Arbitrary {
-      for {
-        websiteAddress <- Gen.alphaStr
-      } yield EtmpWebsite(websiteAddress)
-    }
-
   implicit lazy val arbitraryEtmpOtherIossIntermediaryRegistrations: Arbitrary[EtmpOtherIossIntermediaryRegistrations] =
     Arbitrary {
       for {
@@ -474,7 +467,7 @@ trait Generators {
       }
     }
   }
-  
+
   implicit lazy val arbitraryRegistrationWrapper: Arbitrary[RegistrationWrapper] = {
     Arbitrary {
       for {
@@ -515,21 +508,12 @@ trait Generators {
     }
   }
 
-  implicit lazy val arbitraryEtmpWebsite: Arbitrary[EtmpWebsite] = {
-    Arbitrary {
-      for {
-        websiteAddress <- Gen.alphaStr
-      } yield EtmpWebsite(websiteAddress)
-    }
-  }
-
   implicit lazy val arbitraryEtmpSchemeDetails: Arbitrary[EtmpSchemeDetails] = {
     Arbitrary {
       for {
         commencementDate <- arbitrary[LocalDate].map(_.toString)
         euRegistrationDetails <- Gen.listOfN(3, arbitraryEtmpEuRegistrationDetails.arbitrary)
         previousEURegistrationDetails <- Gen.listOfN(3, arbitraryEtmpPreviousEuRegistrationDetails.arbitrary)
-        websites <- Gen.listOfN(3, arbitraryEtmpWebsite.arbitrary)
         contactName <- Gen.alphaStr
         businessTelephoneNumber <- Gen.alphaNumStr
         businessEmailId <- Gen.alphaStr
@@ -539,7 +523,6 @@ trait Generators {
           commencementDate = commencementDate,
           euRegistrationDetails = euRegistrationDetails,
           previousEURegistrationDetails = previousEURegistrationDetails,
-          websites = Some(websites),
           contactName = contactName,
           businessTelephoneNumber = businessTelephoneNumber,
           businessEmailId = businessEmailId,
@@ -573,7 +556,7 @@ trait Generators {
       }
     }
   }
-  
+
   implicit lazy val arbitraryAmendRegistrationResponse: Arbitrary[AmendRegistrationResponse] = {
     Arbitrary {
       for {
