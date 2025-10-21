@@ -29,12 +29,12 @@ import play.api.libs.json.{Writes, __}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthAction, FakeAuthAction}
-import uk.gov.hmrc.iossintermediaryregistration.models.{Bic, DesAddress, Iban}
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
-import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayEuRegistrationDetails, EtmpDisplayRegistration, EtmpDisplaySchemeDetails}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpIdType.VRN
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.*
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayEuRegistrationDetails, EtmpDisplayRegistration, EtmpDisplaySchemeDetails}
+import uk.gov.hmrc.iossintermediaryregistration.models.{Bic, DesAddress, Iban}
 
 import java.time.format.DateTimeFormatter
 import java.time.{Clock, LocalDate, LocalDateTime, ZoneId}
@@ -133,10 +133,6 @@ trait BaseSpec
           intermediaryNumber = Some("IM123456789")
         )
       ),
-      websites = Some(Seq(
-        EtmpWebsite(websiteAddress = "www.example-one.co.uk"),
-        EtmpWebsite(websiteAddress = "www.example-two.co.uk")
-      )),
       contactName = "Mr Test",
       businessTelephoneNumber = "0123 456789",
       businessEmailId = "mrtest@example.co.uk",
@@ -168,7 +164,6 @@ trait BaseSpec
     schemeDetails = registrationRequest.schemeDetails,
     bankDetails = registrationRequest.bankDetails
   )
-
 }
 
 
