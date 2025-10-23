@@ -37,7 +37,6 @@ class ValidateCoreRegistrationConnectorSpec extends BaseSpec with WireMockHelper
       traderFound = true,
       matches = Seq(
         Match(
-          matchType = MatchType.FixedEstablishmentQuarantinedNETP,
           traderId = "IN12345678",
           intermediary = Some("IN4819283759"),
           memberState = "DE",
