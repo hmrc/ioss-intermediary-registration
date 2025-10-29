@@ -146,14 +146,14 @@ trait BaseSpec
     )
   )
 
-  def etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = EtmpAmendRegistrationRequest(
+  def etmpAmendRegistrationRequest(reRegistration: Boolean = false): EtmpAmendRegistrationRequest = EtmpAmendRegistrationRequest(
     administration = registrationRequest.administration.copy(messageType = EtmpMessageType.IOSSIntAmend),
     changeLog = EtmpAmendRegistrationChangeLog(
       tradingNames = true,
       fixedEstablishments = true,
       contactDetails = true,
       bankDetails = true,
-      reRegistration = false,
+      reRegistration = reRegistration,
       otherAddress = true
     ),
     exclusionDetails = None,

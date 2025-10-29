@@ -270,7 +270,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
     "must return Right OK with a JSON payload response when given a valid payload and the registration is created successfully" in {
 
-      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest()
       val responseJson = Json.toJson(amendRegistrationResponse)
 
       when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
@@ -293,9 +293,113 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
       }
     }
 
+    "must return Right OK with a JSON payload response when given a valid payload and the registration is created successfully with an enrolment" in {
+
+      val formBundler = amendRegistrationResponse.formBundleNumber
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest(reRegistration = true)
+      val responseJson = Json.toJson(amendRegistrationResponse)
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
+      when(mockRegistrationStatusRepository.delete(eqTo(formBundler))) thenReturn true.toFuture
+      when(mockRegistrationStatusRepository.insert(any[RegistrationStatus])) thenReturn InsertSucceeded.toFuture
+      when(mockEnrolmentsConnector.confirmEnrolment(any())(any())) thenReturn HttpResponse(204, "").toFuture
+      when(mockRetryService.getEtmpRegistrationStatus(any(), any(), any())) thenReturn EtmpRegistrationStatus.Success.toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .overrides(bind[RegistrationStatusRepository].toInstance(mockRegistrationStatusRepository))
+        .overrides(bind[EnrolmentsConnector].toInstance(mockEnrolmentsConnector))
+        .overrides(bind[RetryService].toInstance(mockRetryService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(RegistrationData.etmpAmendRegistrationRequest(reRegistration = true)))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` OK
+        contentAsJson(result) `mustBe` responseJson
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+      }
+    }
+
+    "must throw an EtmpException when the EtmpRegistrationStatus returns Error" in {
+
+      val formBundler = amendRegistrationResponse.formBundleNumber
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest(reRegistration = true)
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
+      when(mockRegistrationStatusRepository.delete(eqTo(formBundler))) thenReturn true.toFuture
+      when(mockRegistrationStatusRepository.insert(any[RegistrationStatus])) thenReturn InsertSucceeded.toFuture
+      when(mockEnrolmentsConnector.confirmEnrolment(any())(any())) thenReturn HttpResponse(204, "").toFuture
+      when(mockRetryService.getEtmpRegistrationStatus(any(), any(), any())) thenReturn EtmpRegistrationStatus.Error.toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .overrides(bind[RegistrationStatusRepository].toInstance(mockRegistrationStatusRepository))
+        .overrides(bind[EnrolmentsConnector].toInstance(mockEnrolmentsConnector))
+        .overrides(bind[RetryService].toInstance(mockRetryService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(RegistrationData.etmpAmendRegistrationRequest(reRegistration = true)))
+
+        val result = route(app, request).value
+
+        whenReady(result.failed) { exp =>
+          exp `mustBe` a[EtmpException]
+          exp.getMessage `mustBe` s"Failed to add enrolment, got registration status ${EtmpRegistrationStatus.Error}"
+        }
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+      }
+    }
+
+    "must throw an EtmpException when confirming the enrolment is not a success" in {
+
+      val formBundler = amendRegistrationResponse.formBundleNumber
+
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest(reRegistration = true)
+
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
+      when(mockRegistrationStatusRepository.delete(eqTo(formBundler))) thenReturn true.toFuture
+      when(mockRegistrationStatusRepository.insert(any[RegistrationStatus])) thenReturn InsertSucceeded.toFuture
+      when(mockEnrolmentsConnector.confirmEnrolment(any())(any())) thenReturn HttpResponse(404, "404").toFuture
+      when(mockRetryService.getEtmpRegistrationStatus(any(), any(), any())) thenReturn EtmpRegistrationStatus.Success.toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
+        .overrides(bind[RegistrationStatusRepository].toInstance(mockRegistrationStatusRepository))
+        .overrides(bind[EnrolmentsConnector].toInstance(mockEnrolmentsConnector))
+        .overrides(bind[RetryService].toInstance(mockRetryService))
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(POST, amendRegistrationRoute)
+            .withJsonBody(Json.toJson(RegistrationData.etmpAmendRegistrationRequest(reRegistration = true)))
+
+        val result = route(app, request).value
+
+        whenReady(result.failed) { exp =>
+          exp `mustBe` a[EtmpException]
+          exp.getMessage `mustBe` s"Failed to add enrolment - $NOT_FOUND"
+        }
+        verify(mockRegistrationService, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+      }
+    }
+
     "must return Left Internal Server Error when given a valid payload and the registration is created successfully" in {
 
-      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest()
 
       when(mockRegistrationService.amendRegistration(any())) thenReturn Left(Exception("ERROR")).toFuture
 

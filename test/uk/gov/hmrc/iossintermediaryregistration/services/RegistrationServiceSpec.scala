@@ -143,17 +143,17 @@ class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
 
       "must return Right Amend Registration Response when the amend registration is successful" in {
 
-        when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest)) thenReturn Right(amendRegistrationResponse).toFuture
+        when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest())) thenReturn Right(amendRegistrationResponse).toFuture
 
         val app = applicationBuilder
           .build()
 
         running(app) {
 
-          val result = registrationService.amendRegistration(etmpAmendRegistrationRequest).futureValue
+          val result = registrationService.amendRegistration(etmpAmendRegistrationRequest()).futureValue
 
           result `mustBe` Right(amendRegistrationResponse)
-          verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+          verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest()))
         }
       }
 
@@ -163,21 +163,21 @@ class RegistrationServiceSpec extends BaseSpec with BeforeAndAfterEach {
 
           val errorMessage: String = s"There was an error amending Registration from ETMP: ${error.getClass} ${error.body}"
 
-          when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest)) thenReturn Left(error).toFuture
+          when(mockRegistrationConnector.amendRegistration(etmpAmendRegistrationRequest())) thenReturn Left(error).toFuture
 
           val app = applicationBuilder
             .build()
 
           running(app) {
 
-            val result = registrationService.amendRegistration(etmpAmendRegistrationRequest).failed
+            val result = registrationService.amendRegistration(etmpAmendRegistrationRequest()).failed
 
             whenReady(result) { exp =>
               exp `mustBe` a[EtmpException]
               exp.getMessage `mustBe` errorMessage
             }
 
-            verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest))
+            verify(mockRegistrationConnector, times(1)).amendRegistration(eqTo(etmpAmendRegistrationRequest()))
           }
         }
       }
