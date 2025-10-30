@@ -90,7 +90,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpRegistrationRequestAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.CreateRegistration,
@@ -165,7 +165,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpRegistrationRequestAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.CreateRegistration,
@@ -203,7 +203,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpRegistrationRequestAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.CreateRegistration,
