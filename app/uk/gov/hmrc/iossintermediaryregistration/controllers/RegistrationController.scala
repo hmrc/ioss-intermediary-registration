@@ -133,14 +133,29 @@ case class RegistrationController @Inject()(
   def amend(): Action[EtmpAmendRegistrationRequest] = cc.authAndRequireVat()(parse.json[EtmpAmendRegistrationRequest]).async {
     implicit request =>
       val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = request.body
-      registrationService.amendRegistration(etmpAmendRegistrationRequest).map {
+      registrationService.amendRegistration(etmpAmendRegistrationRequest).flatMap {
         case Right(amendRegistrationResponse) =>
-          Ok(Json.toJson(amendRegistrationResponse))
+
+          if(etmpAmendRegistrationRequest.changeLog.reRegistration) {
+            enrollRegistration(amendRegistrationResponse.formBundleNumber).map {
+              case EtmpRegistrationStatus.Success =>
+                Ok(Json.toJson(amendRegistrationResponse))
+
+              case registrationStatus =>
+                logger.error(s"Failed to add enrolment, got registration status $registrationStatus")
+                registrationStatusRepository.set(
+                  RegistrationStatus(subscriptionId = amendRegistrationResponse.formBundleNumber, status = EtmpRegistrationStatus.Error)
+                )
+                throw EtmpException(s"Failed to add enrolment, got registration status $registrationStatus")
+            }
+          } else {
+            Ok(Json.toJson(amendRegistrationResponse)).toFuture
+          }
 
         case Left(error) =>
           val errorMessage: String = s"Internal server error with error: $error and message: ${error.getMessage}."
           logger.error(errorMessage)
-          InternalServerError(errorMessage)
+          InternalServerError(errorMessage).toFuture
       }
   }
 }
