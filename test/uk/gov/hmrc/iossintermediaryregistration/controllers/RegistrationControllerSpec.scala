@@ -441,7 +441,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
     "must audit successfully when registration is amended" in {
 
-      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest(reRegistration = false)
       val responseJson = Json.toJson(amendRegistrationResponse)
 
       when(mockRegistrationService.amendRegistration(any())) thenReturn Right(amendRegistrationResponse).toFuture
@@ -480,7 +480,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
     "must audit failure when amendRegistration fails" in {
 
-      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest
+      val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest(reRegistration = false)
 
       when(mockRegistrationService.amendRegistration(any())) thenReturn Left(Exception("Error")).toFuture
       doNothing().when(mockAuditService).audit(any())(any(), any())
