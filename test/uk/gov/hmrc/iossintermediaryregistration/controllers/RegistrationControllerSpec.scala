@@ -13,14 +13,17 @@ import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.iossintermediaryregistration.base.BaseSpec
 import uk.gov.hmrc.iossintermediaryregistration.connectors.EnrolmentsConnector
-import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.AuthorisedMandatoryVrnRequest
+import uk.gov.hmrc.iossintermediaryregistration.controllers.actions.{AuthorisedMandatoryVrnRequest, FakeIntermediaryRequiredAction, IntermediaryRequiredAction}
 import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpAmendRegistrationAuditModel, EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
+import uk.gov.hmrc.iossintermediaryregistration.models.audit.{EtmpRegistrationAuditType, EtmpRegistrationRequestAuditModel, SubmissionResult}
+import uk.gov.hmrc.iossintermediaryregistration.models.enrolments.{EACDEnrolment, EACDEnrolments, EACDIdentifiers}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStatus
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.{AmendRegistrationResponse, EtmpAmendRegistrationRequest}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, NotFound, ServiceUnavailable}
+import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, InvalidVrn, ServiceUnavailable}
 import uk.gov.hmrc.iossintermediaryregistration.repositories.InsertResult.InsertSucceeded
 import uk.gov.hmrc.iossintermediaryregistration.repositories.RegistrationStatusRepository
 import uk.gov.hmrc.iossintermediaryregistration.services.{AuditService, RegistrationService, RetryService}
@@ -42,6 +45,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
   private lazy val createRegistrationRoute: String = routes.RegistrationController.createRegistration().url
   private lazy val getRegistrationRoute: String = routes.RegistrationController.displayRegistration(intermediaryNumber).url
   private lazy val amendRegistrationRoute: String = routes.RegistrationController.amend().url
+  private lazy val getAccountsRegistrationRoute: String = routes.RegistrationController.getAccounts.url
 
   override def beforeEach(): Unit = {
     reset(mockRegistrationService)
@@ -90,7 +94,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpRegistrationRequestAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.CreateRegistration,
@@ -165,7 +169,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpRegistrationRequestAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.CreateRegistration,
@@ -203,7 +207,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpRegistrationRequestAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.CreateRegistration,
@@ -461,7 +465,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpAmendRegistrationAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.AmendRegistration,
@@ -499,7 +503,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedErrorMessage = s"Internal server error: $NotFound and message: ${NotFound.body}."
 
@@ -514,6 +518,51 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         status(result) mustBe INTERNAL_SERVER_ERROR
         verify(mockAuditService, times(1)).audit(eqTo(expectedAuditEvent))(any(), any())
+      }
+    }
+  }
+
+  ".getAccounts" - {
+    "should return right Json Enrolments when call to connector succeeds" in {
+
+      val eACDEnrolments = EACDEnrolments(enrolments = Seq(EACDEnrolment(service = "???", state = "???", activationDate = None, identifiers = Seq(EACDIdentifiers(key = "???", value = "???")))))
+      when(mockEnrolmentsConnector.es2(any())(any())) thenReturn Right(eACDEnrolments).toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[EnrolmentsConnector].toInstance(mockEnrolmentsConnector))
+        .overrides(bind[IntermediaryRequiredAction].to[FakeIntermediaryRequiredAction])
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(GET, getAccountsRegistrationRoute)
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest()))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` OK
+        verify(mockEnrolmentsConnector, times(1)).es2(any())(any())
+      }
+    }
+    "should return Left InternalServerError when call to connector fails" in {
+      when(mockEnrolmentsConnector.es2(any())(any())) thenReturn Left(InvalidVrn).toFuture
+
+      val app = applicationBuilder
+        .overrides(bind[EnrolmentsConnector].toInstance(mockEnrolmentsConnector))
+        .overrides(bind[IntermediaryRequiredAction].to[FakeIntermediaryRequiredAction])
+        .build()
+
+      running(app) {
+
+        val request =
+          FakeRequest(GET, getAccountsRegistrationRoute)
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest()))
+
+        val result = route(app, request).value
+
+        status(result) `mustBe` INTERNAL_SERVER_ERROR
+        verify(mockEnrolmentsConnector, times(1)).es2(any())(any())
       }
     }
   }

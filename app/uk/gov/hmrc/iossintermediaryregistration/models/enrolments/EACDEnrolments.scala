@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.iossintermediaryregistration.config
+package uk.gov.hmrc.iossintermediaryregistration.models.enrolments
 
-import play.api.Configuration
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
+case class EACDEnrolments(enrolments: Seq[EACDEnrolment])
 
-class TaxEnrolmentsConfig @Inject()(config: Configuration) {
-
-  val baseUrl: Service = config.get[Service]("microservice.services.enrolments")
-  val callbackBaseUrl: String = config.get[String]("microservice.services.enrolments.callbackBaseUrl")
-  val intermediaryEnrolment: String = config.get[String]("intermediaryEnrolment")
+object EACDEnrolments {
+  implicit val format: OFormat[EACDEnrolments] = Json.format[EACDEnrolments]
 }
