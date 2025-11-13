@@ -166,7 +166,7 @@ case class RegistrationController @Inject()(
           }
 
         case Left(error) =>
-          val errorMessage: String = s"Internal server error: $error and message: ${error.getMessage}."
+          val errorMessage: String = s"Internal server error: $error and message: ${error.body}."
 
           auditService.audit(
             EtmpAmendRegistrationAuditModel.build(
