@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.time.{Seconds, Span}
 import play.api.inject.bind
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc.AnyContentAsJson
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -20,7 +20,7 @@ import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationStat
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.{AmendRegistrationResponse, EtmpAmendRegistrationRequest}
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.responses.EtmpEnrolmentResponse
-import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, ServiceUnavailable}
+import uk.gov.hmrc.iossintermediaryregistration.models.responses.{EtmpEnrolmentError, EtmpException, NotFound, ServiceUnavailable}
 import uk.gov.hmrc.iossintermediaryregistration.repositories.InsertResult.InsertSucceeded
 import uk.gov.hmrc.iossintermediaryregistration.repositories.RegistrationStatusRepository
 import uk.gov.hmrc.iossintermediaryregistration.services.{AuditService, RegistrationService, RetryService}
@@ -404,7 +404,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
       val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest()
 
-      when(mockRegistrationService.amendRegistration(any())) thenReturn Left(Exception("ERROR")).toFuture
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Left(NotFound).toFuture
 
       val app = applicationBuilder
         .overrides(bind[RegistrationService].toInstance(mockRegistrationService))
@@ -482,7 +482,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
       val etmpAmendRegistrationRequest: EtmpAmendRegistrationRequest = RegistrationData.etmpAmendRegistrationRequest(reRegistration = false)
 
-      when(mockRegistrationService.amendRegistration(any())) thenReturn Left(Exception("Error")).toFuture
+      when(mockRegistrationService.amendRegistration(any())) thenReturn Left(NotFound).toFuture
       doNothing().when(mockAuditService).audit(any())(any(), any())
 
       val app = applicationBuilder
@@ -501,7 +501,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
           AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
 
-        val expectedErrorMessage = "Internal server error: java.lang.Exception: Error and message: Error."
+        val expectedErrorMessage = s"Internal server error: $NotFound and message: ${NotFound.body}."
 
         val expectedAuditEvent = EtmpAmendRegistrationAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.AmendRegistration,
