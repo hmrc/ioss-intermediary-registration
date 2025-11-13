@@ -465,7 +465,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedAuditEvent = EtmpAmendRegistrationAuditModel.build(
           etmpRegistrationAuditType = EtmpRegistrationAuditType.AmendRegistration,
@@ -503,7 +503,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
         val result = route(app, request).value
 
         implicit val dataRequest: AuthorisedMandatoryVrnRequest[AnyContentAsJson] =
-          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn)
+          AuthorisedMandatoryVrnRequest(request, testCredentials, "id", vrn, None, None)
 
         val expectedErrorMessage = s"Internal server error: $NotFound and message: ${NotFound.body}."
 
@@ -537,7 +537,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         val request =
           FakeRequest(GET, getAccountsRegistrationRoute)
-            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest))
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest()))
 
         val result = route(app, request).value
 
@@ -557,7 +557,7 @@ class RegistrationControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
         val request =
           FakeRequest(GET, getAccountsRegistrationRoute)
-            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest))
+            .withJsonBody(Json.toJson(etmpAmendRegistrationRequest()))
 
         val result = route(app, request).value
 
