@@ -18,7 +18,7 @@ package uk.gov.hmrc.iossintermediaryregistration.services
 
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationHttpParser.CreateEtmpRegistrationResponse
+import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationHttpParser.{AmendEtmpRegistrationResponse, CreateEtmpRegistrationResponse}
 import uk.gov.hmrc.iossintermediaryregistration.connectors.{GetVatInfoConnector, RegistrationConnector}
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationRequest
@@ -71,15 +71,7 @@ class RegistrationService @Inject()(
     }
   }
 
-  def amendRegistration(etmpRegistrationRequest: EtmpAmendRegistrationRequest): Future[Either[Throwable, AmendRegistrationResponse]] = {
-    registrationConnector.amendRegistration(etmpRegistrationRequest).flatMap {
-      case Right(amendRegistrationResponse: AmendRegistrationResponse) =>
-        logger.info(s"Successfully sent amend registration to ETMP at ${amendRegistrationResponse.processingDateTime}.")
-        Right(amendRegistrationResponse).toFuture
-
-      case Left(error) =>
-        logger.error(s"An error occurred while amending registration ${error.getClass} ${error.body}")
-        throw EtmpException(s"There was an error amending Registration from ETMP: ${error.getClass} ${error.body}")
-    }
+  def amendRegistration(etmpRegistrationRequest: EtmpAmendRegistrationRequest): Future[AmendEtmpRegistrationResponse] = {
+    registrationConnector.amendRegistration(etmpRegistrationRequest)
   }
 }
