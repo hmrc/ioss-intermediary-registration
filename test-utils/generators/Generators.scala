@@ -563,14 +563,14 @@ trait Generators {
         processingDateTime <- arbitrary[LocalDateTime]
         formBundleNumber <- genIntermediaryNumber
         vrn <- arbitraryVrn.arbitrary.map(_.vrn)
-        intermediary <- genIntermediaryNumber
+        intReference <- genIntermediaryNumber
         businessPartner <- arbitrary[String]
       } yield {
         AmendRegistrationResponse(
           processingDateTime = processingDateTime,
           formBundleNumber = formBundleNumber,
           vrn = vrn,
-          intermediary = intermediary,
+          intReference = intReference,
           businessPartner = businessPartner
         )
       }
