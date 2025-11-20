@@ -22,10 +22,9 @@ import uk.gov.hmrc.iossintermediaryregistration.connectors.RegistrationHttpParse
 import uk.gov.hmrc.iossintermediaryregistration.connectors.{GetVatInfoConnector, RegistrationConnector}
 import uk.gov.hmrc.iossintermediaryregistration.logging.Logging
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.EtmpRegistrationRequest
-import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.{AmendRegistrationResponse, EtmpAmendRegistrationRequest}
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.EtmpAmendRegistrationRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.RegistrationWrapper
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.EtmpException
-import uk.gov.hmrc.iossintermediaryregistration.utils.FutureSyntax.FutureOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
