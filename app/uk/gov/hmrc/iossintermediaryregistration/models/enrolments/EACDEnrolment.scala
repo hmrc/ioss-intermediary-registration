@@ -32,7 +32,7 @@ object EACDEnrolment {
     (
       (__ \ "service").read[String] and
         (__ \ "state").read[String] and
-        (__ \ "activationDate").readNullable[String].map(_.map(t => LocalDateTime.parse(t.split("\\.").head, dateTimeEACDFormat))) and // TODO VEIOSS-575
+        (__ \ "activationDate").readNullable[String].map(_.map(t => LocalDateTime.parse(t.split("\\.").head, dateTimeEACDFormat))) and
         (__ \ "identifiers").read[Seq[EACDIdentifiers]]
       )((service, state, activationDate, identifiers) => EACDEnrolment(service, state, activationDate, identifiers))
   }
