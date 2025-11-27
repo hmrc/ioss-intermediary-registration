@@ -8,11 +8,14 @@ import uk.gov.hmrc.iossintermediaryregistration.models.*
 import uk.gov.hmrc.iossintermediaryregistration.models.des.VatCustomerInfo
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.*
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.amend.AmendRegistrationResponse
+import uk.gov.hmrc.iossintermediaryregistration.models.etmp.channelPreference.ChannelPreferenceRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.etmp.display.{EtmpDisplayEuRegistrationDetails, EtmpDisplayRegistration, EtmpDisplaySchemeDetails, RegistrationWrapper}
+import uk.gov.hmrc.iossintermediaryregistration.models.external.{Event, EventData}
 import uk.gov.hmrc.iossintermediaryregistration.models.requests.SaveForLaterRequest
 import uk.gov.hmrc.iossintermediaryregistration.models.responses.SaveForLaterResponse
 
 import java.time.{Instant, LocalDate, LocalDateTime}
+import java.util.UUID
 
 trait Generators {
 
@@ -572,6 +575,55 @@ trait Generators {
           vrn = vrn,
           intReference = intReference,
           businessPartner = businessPartner
+        )
+      }
+    }
+  }
+
+  implicit lazy val arbitraryChannelPreferenceRequest: Arbitrary[ChannelPreferenceRequest] = {
+    Arbitrary {
+      for {
+        identifier <- arbitrary[Vrn]
+        emailAddress <- arbitrary[String]
+        unusableStatus <- arbitrary[Boolean]
+      } yield {
+        ChannelPreferenceRequest(
+          identifierType = "INT",
+          identifier = identifier.toString,
+          emailAddress = emailAddress,
+          unusableStatus = unusableStatus
+        )
+      }
+    }
+  }
+
+  implicit lazy val arbitraryEventData: Arbitrary[EventData] = {
+    Arbitrary {
+      for {
+        emailAddress <- arbitrary[String]
+        tag1 <- arbitrary[String]
+        tag2 <- arbitrary[String]
+      } yield {
+        EventData(
+          emailAddress = emailAddress,
+          tags = Map(tag1 -> tag2)
+        )
+      }
+    }
+  }
+
+  implicit lazy val arbitraryEvent: Arbitrary[Event] = {
+    Arbitrary {
+      for {
+        subject <- arbitrary[String]
+        groupId <- arbitrary[String]
+        event <- arbitraryEventData.arbitrary
+      } yield {
+        Event(
+          eventId = UUID.randomUUID(),
+          subject = subject,
+          groupId = groupId,
+          event = event
         )
       }
     }
