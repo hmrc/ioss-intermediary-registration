@@ -15,7 +15,7 @@ import scala.concurrent.Future
 
 class EventControllerSpec extends BaseSpec {
 
-  private val enrolmentString = s"HMRC--IOSS-INT~IntNumber~$intNumber"
+  private val enrolmentString = s"HMRC-IOSS-INT~IntNumber~$intNumber"
   private val eventRequest = Event(UUID.randomUUID(), "subject", "groupId", EventData("email@email.com", Map("enrolment" -> enrolmentString)))
 
   "EventController" - {
