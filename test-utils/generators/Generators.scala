@@ -181,7 +181,7 @@ trait Generators {
         Some(addressLine2),
         townOrCity,
         Some(regionOrState),
-        postcode
+        Some(postcode)
       )
     }
 
