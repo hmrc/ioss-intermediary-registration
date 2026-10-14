@@ -36,6 +36,7 @@ class EtmpSchemeDetailsSpec extends BaseSpec {
           "contactName" -> etmpSchemeDetails.contactName,
           "businessTelephoneNumber" -> etmpSchemeDetails.businessTelephoneNumber,
           "businessEmailId" -> etmpSchemeDetails.businessEmailId,
+          "websites" -> etmpSchemeDetails.websites,
           "nonCompliantReturns" -> etmpSchemeDetails.nonCompliantReturns,
           "nonCompliantPayments" -> etmpSchemeDetails.nonCompliantPayments
         )
@@ -62,6 +63,7 @@ class EtmpSchemeDetailsSpec extends BaseSpec {
           "euRegistrationDetails" -> etmpSchemeDetails.euRegistrationDetails,
           "previousEURegistrationDetails" -> etmpSchemeDetails.previousEURegistrationDetails,
           "contactName" -> etmpSchemeDetails.contactName,
+          "websites" -> etmpSchemeDetails.websites,
           "businessTelephoneNumber" -> etmpSchemeDetails.businessTelephoneNumber,
           "businessEmailId" -> etmpSchemeDetails.businessEmailId,
         )

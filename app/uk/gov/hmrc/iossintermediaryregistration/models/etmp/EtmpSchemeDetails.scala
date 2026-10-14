@@ -26,6 +26,7 @@ case class EtmpSchemeDetails(
                               contactName: String,
                               businessTelephoneNumber: String,
                               businessEmailId: String,
+                              websites: Option[Seq[EtmpWebsite]] = Some(Seq.empty), // TODO toggle based on 7.7 or not
                               nonCompliantReturns: Option[String],
                               nonCompliantPayments: Option[String]
                             )
