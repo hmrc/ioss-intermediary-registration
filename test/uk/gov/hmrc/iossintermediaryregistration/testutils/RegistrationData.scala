@@ -34,6 +34,7 @@ object RegistrationData extends BaseSpec {
     contactName = arbitrary[String].sample.value,
     businessTelephoneNumber = arbitrary[String].sample.value,
     businessEmailId = arbitrary[String].sample.value,
+    websites = Some(Seq.empty),
     nonCompliantReturns = Some(arbitrary[String].sample.value),
     nonCompliantPayments = Some(arbitrary[String].sample.value)
   )

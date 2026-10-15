@@ -48,6 +48,7 @@ class EtmpSchemeDetailsSpec extends BaseSpec {
           contactName = etmpSchemeDetails.contactName,
           businessTelephoneNumber = etmpSchemeDetails.businessTelephoneNumber,
           businessEmailId = etmpSchemeDetails.businessEmailId,
+          websites = Some(Seq.empty),
           nonCompliantReturns = etmpSchemeDetails.nonCompliantReturns,
           nonCompliantPayments = etmpSchemeDetails.nonCompliantPayments
         )
@@ -75,6 +76,7 @@ class EtmpSchemeDetailsSpec extends BaseSpec {
           contactName = etmpSchemeDetails.contactName,
           businessTelephoneNumber = etmpSchemeDetails.businessTelephoneNumber,
           businessEmailId = etmpSchemeDetails.businessEmailId,
+          websites = Some(Seq.empty),
           nonCompliantReturns = None,
           nonCompliantPayments = None
         )
