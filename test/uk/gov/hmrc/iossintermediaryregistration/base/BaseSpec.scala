@@ -137,6 +137,7 @@ trait BaseSpec
       contactName = "Mr Test",
       businessTelephoneNumber = "0123 456789",
       businessEmailId = "mrtest@example.co.uk",
+      websites = Some(Seq.empty),
       nonCompliantReturns = Some("1"),
       nonCompliantPayments = Some("2")
     ),

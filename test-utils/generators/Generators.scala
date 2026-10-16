@@ -529,6 +529,7 @@ trait Generators {
           contactName = contactName,
           businessTelephoneNumber = businessTelephoneNumber,
           businessEmailId = businessEmailId,
+          websites = Some(Seq.empty),
           nonCompliantReturns = Some(nonCompliant),
           nonCompliantPayments = Some(nonCompliant)
         )
